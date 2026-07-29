@@ -3,874 +3,401 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Demonstração Premium — Controle de Pagamentos</title>
+  <title>Fluxo de Pagamentos — Demonstração</title>
   <style>
     :root{
-      --bg:#081321;
-      --panel:#ffffff;
-      --text:#11213b;
-      --muted:#6d7c93;
-      --line:#dbe4ef;
-      --blue:#1a73ff;
-      --blue-2:#0b5cd7;
-      --green:#1ea76a;
-      --soft-blue:#ecf4ff;
-      --soft-green:#e9f8f1;
-      --warning:#d6a200;
-      --warning-soft:#fff7d8;
-      --radius:22px;
-      --shadow:0 18px 50px rgba(8, 24, 48, .18);
+      --bg:#071321; --panel:#fff; --text:#10213a; --muted:#6d7d93;
+      --line:#dce5ef; --blue:#1769e8; --green:#1e9d63;
+      --green-soft:#e9f8f1; --blue-soft:#edf4ff;
+      --yellow:#ad7d00; --yellow-soft:#fff6d8;
+      --shadow:0 18px 50px rgba(3,18,37,.22);
     }
-
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
     body{
-      margin:0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin:0; min-height:100vh; color:#fff;
+      font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
       background:
-        radial-gradient(circle at 10% 10%, rgba(26,115,255,.16), transparent 22%),
-        radial-gradient(circle at 90% 0%, rgba(30,167,106,.14), transparent 25%),
-        linear-gradient(180deg, #091321 0%, #10243f 100%);
-      color:#fff;
-      overflow-x:auto;
+        radial-gradient(circle at 8% 5%,rgba(23,105,232,.22),transparent 24%),
+        radial-gradient(circle at 93% 18%,rgba(30,157,99,.18),transparent 24%),
+        linear-gradient(180deg,#071321,#0d2340);
     }
+    button{font:inherit;cursor:pointer}
+    .page{max-width:1540px;margin:auto;padding:22px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+    .brand{display:flex;align-items:center;gap:13px}
+    .mark{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,var(--blue),var(--green));font-weight:900;box-shadow:0 12px 28px rgba(23,105,232,.35)}
+    .brand h1{font-size:18px;margin:0}.brand p{font-size:12px;color:#b6c5d7;margin:4px 0 0}
+    .actions{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{border:0;border-radius:13px;padding:12px 16px;font-weight:850;display:inline-flex;align-items:center;gap:8px;transition:.2s}
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{background:var(--blue);color:#fff;box-shadow:0 12px 30px rgba(23,105,232,.3)}
+    .btn-light{background:#fff;color:#173b68}
+    .status{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:9px 12px;background:rgba(255,255,255,.09);font-size:12px;font-weight:850}
+    .status:before{content:"";width:8px;height:8px;border-radius:50%;background:#38df8d;box-shadow:0 0 0 0 rgba(56,223,141,.5);animation:ping 1.6s infinite}
+    @keyframes ping{70%{box-shadow:0 0 0 11px transparent}}
+    .intro{
+      background:linear-gradient(135deg,#0e2a4e,#125da0 58%,#137d59);
+      padding:28px;border-radius:26px;box-shadow:var(--shadow);position:relative;overflow:hidden;margin-bottom:18px
+    }
+    .intro:after{content:"";position:absolute;width:280px;height:280px;border-radius:50%;right:-80px;top:-110px;background:rgba(255,255,255,.08)}
+    .intro h2{margin:0 0 10px;font-size:36px;line-height:1.1;max-width:1050px}
+    .intro p{margin:0;color:#e8f2ff;line-height:1.65;max-width:980px}
 
-    .blobs{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
-    .blob{
-      position:absolute;border-radius:50%;filter:blur(24px);opacity:.23;
-      animation: floatBlob 16s ease-in-out infinite;
-    }
-    .blob.b1{width:320px;height:320px;background:#1569ff;left:-80px;top:40px}
-    .blob.b2{width:260px;height:260px;background:#13a86c;right:-40px;top:120px;animation-delay:-4s}
-    .blob.b3{width:220px;height:220px;background:#1d5dd6;left:45%;bottom:20px;animation-delay:-8s}
-    @keyframes floatBlob{
-      0%,100%{transform:translate(0,0) scale(1)}
-      50%{transform:translate(18px,-16px) scale(1.06)}
-    }
-
-    .page{
-      position:relative;z-index:1;
-      max-width:1400px;
-      margin:0 auto;
-      padding:24px 18px 56px;
-      min-width:0;
-    }
-
-    .topbar{
-      display:flex;justify-content:space-between;align-items:center;gap:16px;
-      margin-bottom:20px;flex-wrap:wrap;
-    }
-    .brand{display:flex;align-items:center;gap:14px}
-    .brand-mark{
-      width:48px;height:48px;border-radius:16px;display:grid;place-items:center;
-      background:linear-gradient(135deg,var(--blue),var(--green));
-      box-shadow:0 18px 40px rgba(26,115,255,.35);
-      font-weight:900;font-size:20px;
-    }
-    .brand h1{margin:0;font-size:18px}
-    .brand p{margin:3px 0 0;color:#b7c6d9;font-size:12px}
-
-    .top-actions{display:flex;gap:10px;flex-wrap:wrap}
-    .btn{
-      border:0;border-radius:14px;padding:13px 18px;font-weight:800;
-      display:inline-flex;align-items:center;justify-content:center;gap:9px;
-      transition:.22s;cursor:pointer;font-size:14px;
-    }
-    .btn:hover{transform:translateY(-2px)}
-    .btn-primary{background:linear-gradient(135deg,var(--blue),#0e62e5);color:#fff;box-shadow:0 14px 35px rgba(26,115,255,.28)}
-    .btn-primary.glow{animation:glowPulse 1.8s infinite}
-    @keyframes glowPulse{
-      0%,100%{box-shadow:0 14px 35px rgba(26,115,255,.28)}
-      50%{box-shadow:0 18px 45px rgba(26,115,255,.42)}
-    }
-    .btn-light{background:#fff;color:#153a67}
-    .btn-soft{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.12)}
-
-    .hero{
-      position:relative;overflow:hidden;
-      background:linear-gradient(135deg,#0d1f36 0%, #123764 52%, #127853 100%);
-      border:1px solid rgba(255,255,255,.1);
-      border-radius:30px;padding:32px;
-      box-shadow:var(--shadow);
-      margin-bottom:20px;
-    }
-    .hero:before,.hero:after{
-      content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.08)
-    }
-    .hero:before{width:300px;height:300px;right:-60px;top:-100px}
-    .hero:after{width:220px;height:220px;left:-70px;bottom:-100px}
-    .hero-grid{
-      display:grid;grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);
-      gap:24px;align-items:center;position:relative;z-index:1;
-    }
-    .hero h2{font-size:42px;line-height:1.08;margin:0 0 12px;max-width:760px}
-    .hero p{margin:0;color:#ecf3ff;font-size:16px;line-height:1.7;max-width:680px}
-    .hero-badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
-    .hero-badge{
-      background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.14);padding:10px 12px;
-      border-radius:999px;font-size:12px;font-weight:800;color:#f7fbff
-    }
-
-    .mock-live{
-      background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);
-      border-radius:24px;padding:18px;backdrop-filter:blur(8px);
-      min-width:0;
-    }
-    .live-head{
-      display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px
-    }
-    .live-head b{font-size:14px}
-    .live-badge{
-      display:inline-flex;align-items:center;gap:8px;padding:8px 11px;border-radius:999px;
-      background:rgba(10,24,42,.42);font-size:11px;font-weight:900
-    }
-    .live-badge:before{
-      content:"";width:8px;height:8px;border-radius:50%;background:#3ae18f;box-shadow:0 0 0 0 rgba(58,225,143,.45);
-      animation: ping 1.6s infinite;
-    }
-    @keyframes ping{
-      0%{box-shadow:0 0 0 0 rgba(58,225,143,.5)}
-      70%{box-shadow:0 0 0 10px rgba(58,225,143,0)}
-      100%{box-shadow:0 0 0 0 rgba(58,225,143,0)}
-    }
-    .mini-chat{
-      background:#f8fbff;color:var(--text);border-radius:20px;padding:14px;box-shadow:0 10px 28px rgba(5,24,44,.22)
-    }
-    .mini-chat-top{display:flex;align-items:center;gap:10px;padding-bottom:10px;border-bottom:1px solid #e3ebf5}
-    .ava{
-      width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#def5ea;color:#0c7b4a;font-weight:900
-    }
-    .chat-body{display:grid;gap:10px;padding-top:14px}
-    .bubble{
-      max-width:86%;padding:12px 14px;border-radius:16px;background:#fff;box-shadow:0 8px 24px rgba(22,45,78,.12);font-size:12px;line-height:1.45
-    }
-    .bubble.right{margin-left:auto;background:#def5ea}
-    .bubble.file{border-left:4px solid var(--blue)}
-    .typing{
-      width:64px;padding:10px 12px;border-radius:16px;background:#fff;box-shadow:0 8px 24px rgba(22,45,78,.12);
-      display:flex;gap:4px;align-items:center
-    }
-    .typing span{
-      width:8px;height:8px;border-radius:50%;background:#9cb1cc;animation:typing 1.2s infinite ease-in-out
-    }
-    .typing span:nth-child(2){animation-delay:.15s}
-    .typing span:nth-child(3){animation-delay:.3s}
-    @keyframes typing{
-      0%,80%,100%{transform:translateY(0);opacity:.5}
-      40%{transform:translateY(-5px);opacity:1}
-    }
-
-    .stats{
-      display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:20px
-    }
-    .stat{
-      background:rgba(255,255,255,.08);backdrop-filter:blur(10px);
-      border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:18px;min-width:0;
-    }
-    .stat small{display:block;color:#b7c6d9;font-size:11px;text-transform:uppercase;font-weight:900;letter-spacing:.06em}
-    .stat strong{display:block;font-size:30px;margin-top:8px}
-    .stat p{margin:6px 0 0;color:#d7e2ef;font-size:13px;line-height:1.45}
-
-    .storyboard{
-      display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;margin-bottom:20px
-    }
-    .panel{
-      background:#fff;color:var(--text);border-radius:28px;padding:22px;box-shadow:var(--shadow);min-width:0;
-    }
-    .panel h3{margin:0 0 8px;font-size:21px}
-    .panel p{margin:0;color:var(--muted);line-height:1.6}
-    .progress-top{
-      display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:18px
-    }
-    .progress-label{font-size:13px;font-weight:800;color:#355278}
-    .progress-bar{
-      margin-top:12px;height:12px;border-radius:999px;background:#e7edf5;overflow:hidden
-    }
-    .progress-bar span{
-      display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--green));
-      transition:width .55s
-    }
-    .timeline{
-      display:grid;gap:10px;margin-top:18px
-    }
-    .step{
-      display:flex;gap:12px;padding:12px;border-radius:16px;border:1px solid #ebf0f6;background:#fbfdff;
-      opacity:.35;transform:translateY(6px);transition:.35s;min-width:0;
-    }
-    .step.active,.step.done{opacity:1;transform:translateY(0)}
-    .step.done{background:#f5fbf8;border-color:#dbeee5}
-    .step-num{
-      width:30px;height:30px;border-radius:10px;background:#edf3fb;color:var(--blue);display:grid;place-items:center;font-weight:900;flex:0 0 auto
-    }
-    .step.done .step-num{background:#e5f6ed;color:var(--green)}
-    .step b{display:block;font-size:13px}
-    .step span{display:block;color:var(--muted);font-size:12px;margin-top:4px;line-height:1.45}
-
-    .receipt-card{
-      background:#f6f9fc;border:1px solid var(--line);border-radius:20px;padding:16px;position:relative;overflow:hidden
-    }
-    .scan-line{
-      position:absolute;left:0;right:0;height:4px;background:linear-gradient(90deg, transparent, rgba(26,115,255,.8), transparent);
-      top:0;opacity:0;box-shadow:0 0 20px rgba(26,115,255,.6)
-    }
-    .scan-line.run{opacity:1;animation:scanDown 1.5s linear infinite}
-    @keyframes scanDown{
-      0%{top:0}
-      100%{top:100%}
-    }
-    .receipt-paper{
-      width:min(100%,380px);margin:0 auto;background:#fff;border-radius:14px;padding:24px;box-shadow:0 16px 40px rgba(29,46,72,.12);
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    }
-    .receipt-paper h4{text-align:center;margin:0 0 16px;font-size:15px}
-    .receipt-line{display:flex;justify-content:space-between;gap:14px;padding:8px 0;border-bottom:1px dashed #d9e0e8;font-size:12px}
-    .receipt-amount{text-align:center;font-size:26px;font-weight:900;padding:18px 0;color:#11213b}
-    .chips{
-      display:flex;flex-wrap:wrap;gap:10px;margin-top:16px
-    }
-    .chip{
-      padding:10px 12px;border-radius:14px;background:#f4f8fc;border:1px solid #dfe7f0;font-size:12px;font-weight:800;color:#27486f;
-      opacity:0;transform:translateY(8px) scale(.96);transition:.35s
-    }
-    .chip.show{opacity:1;transform:translateY(0) scale(1)}
-    .chip.green{background:#edf9f3;border-color:#d9efdf;color:#136f45}
-    .chip.warn{background:#fff9e7;border-color:#f4e7b4;color:#9a7a0b}
-
-    .control-room{
+    .journey{
       display:grid;
-      grid-template-columns:minmax(260px,.72fr) minmax(0,1.28fr);
-      gap:20px;
-      margin-bottom:20px;
-      align-items:start;
+      grid-template-columns:minmax(255px,.84fr) 58px minmax(280px,.96fr) 58px minmax(300px,1fr) 58px minmax(385px,1.25fr);
+      gap:12px;align-items:stretch
     }
-    .form-grid{
-      display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px
-    }
-    .field{display:grid;gap:7px;min-width:0}
-    .field.full{grid-column:1/-1}
-    .field label{font-size:12px;font-weight:900;color:#40536f}
-    .field input,.field select{
-      border:1px solid #d1dbe7;border-radius:12px;padding:12px 13px;font:inherit;color:var(--text);outline:none;background:#fff;
-      transition:.2s;width:100%;min-width:0;
-    }
-    .field input:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,115,255,.12)}
-    .field.flash input,.field.flash select{animation:fieldPop .5s ease}
-    @keyframes fieldPop{
-      0%{background:#fff}
-      45%{background:#eef6ff;border-color:#9dc5ff}
-      100%{background:#fff}
-    }
+    .panel{background:#fff;color:var(--text);border-radius:24px;padding:18px;box-shadow:var(--shadow);min-width:0;position:relative;overflow:hidden}
+    .panel-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:14px}
+    .panel h3{margin:0;font-size:17px}.panel p{margin:5px 0 0;color:var(--muted);font-size:12px;line-height:1.5}
+    .panel-badge{display:inline-flex;align-items:center;gap:7px;padding:7px 9px;border-radius:999px;background:var(--blue-soft);color:#16538e;font-size:10px;font-weight:900;white-space:nowrap}
+    .connector{display:flex;align-items:center;justify-content:center;position:relative}
+    .connector .line{height:4px;width:100%;border-radius:99px;background:rgba(255,255,255,.14);overflow:hidden;position:relative}
+    .connector .line span{display:block;height:100%;width:0;background:linear-gradient(90deg,#66a3ff,#42d990);transition:width .7s}
+    .connector .arrow{position:absolute;right:-2px;color:#8eb9ef;font-size:25px;font-weight:900}
+    .connector.active .line span{width:100%}
+    .connector.active .arrow{color:#41d98d;animation:arrowPulse .8s ease}
+    @keyframes arrowPulse{50%{transform:translateX(7px)}}
 
-    .confidence{
-      margin-top:16px;padding:14px;border-radius:16px;background:linear-gradient(135deg,#ecf7ff,#eefbf5);
-      border:1px solid #d5e7f2;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap
-    }
-    .confidence strong{color:#124f7e;font-size:14px}
-    .confidence span{font-size:26px;font-weight:900;color:#126d44}
-    .checks{
-      display:grid;gap:10px;margin-top:16px
-    }
-    .check{
-      padding:12px;border-radius:14px;background:#fbfdff;border:1px solid #e7eef5;display:flex;align-items:center;gap:10px;
-      opacity:.4;transition:.35s;min-width:0;
-    }
-    .check.show{opacity:1;background:#f5fbf8;border-color:#dceee4}
-    .check .dot{
-      width:24px;height:24px;border-radius:8px;background:#e4f5ec;color:var(--green);display:grid;place-items:center;font-weight:900;flex:0 0 auto
-    }
+    .phone{background:#e9f1ed;border:7px solid #122338;border-radius:27px;overflow:hidden;min-height:500px}
+    .phone-top{background:#075e54;color:#fff;padding:13px;display:flex;align-items:center;gap:10px}
+    .avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#dcf8c6;color:#146446;font-weight:900}
+    .phone-top strong{display:block;font-size:13px}.phone-top small{display:block;color:#d8ece8;margin-top:2px}
+    .chat{padding:16px 11px;display:grid;gap:10px;min-height:410px;align-content:start;background:#e7efe9}
+    .bubble{max-width:88%;background:#fff;padding:10px 12px;border-radius:12px;box-shadow:0 4px 14px rgba(25,54,42,.1);font-size:12px;line-height:1.45;opacity:0;transform:translateY(10px);transition:.35s}
+    .bubble.show{opacity:1;transform:none}.bubble.sent{margin-left:auto;background:#d9fdd3}
+    .file-card{display:flex;gap:10px;align-items:center;padding:8px;border-radius:10px;background:rgba(255,255,255,.6);margin-top:7px}
+    .file-icon{width:38px;height:38px;border-radius:10px;background:#fff;display:grid;place-items:center;font-size:20px}
+    .time{display:block;text-align:right;color:#75877e;font-size:9px;margin-top:4px}
+    .typing{display:none;width:58px;background:#fff;border-radius:12px;padding:10px;gap:4px}
+    .typing.show{display:flex}.typing i{width:7px;height:7px;border-radius:50%;background:#91a59b;animation:typing 1.1s infinite}
+    .typing i:nth-child(2){animation-delay:.13s}.typing i:nth-child(3){animation-delay:.26s}
+    @keyframes typing{50%{transform:translateY(-4px)}}
 
-    .sheet-card{
-      position:relative;
-      background:#fbfdff;border:1px solid var(--line);border-radius:20px;padding:18px;overflow:hidden;min-width:0;
-    }
-    .sheet-top{
-      display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap
-    }
-    .sheet-badge{
-      display:inline-flex;align-items:center;gap:8px;background:#edf7ff;color:#16518d;padding:8px 11px;border-radius:999px;font-size:11px;font-weight:900
-    }
-    .table-wrap{
-      overflow:auto;border:1px solid #e1e8f0;border-radius:18px;background:#fff;max-width:100%;
-    }
-    table{width:100%;border-collapse:collapse;min-width:980px}
-    th,td{padding:12px 14px;border-bottom:1px solid #e7edf4;text-align:left;font-size:12px}
-    th{background:#f6f9fc;color:#57708d;text-transform:uppercase;font-size:10px;letter-spacing:.05em}
-    tr:last-child td{border-bottom:0}
-    .badge{
-      display:inline-flex;padding:6px 9px;border-radius:999px;font-size:11px;font-weight:900
-    }
-    .badge.ok{background:#eaf8f1;color:#156d45}
-    .badge.wait{background:#fff8df;color:#8d7006}
-    .new-row{
-      background:linear-gradient(90deg,#ecf5ff,#eefcf5);
-      animation:slideRow .8s ease;
-    }
-    @keyframes slideRow{
-      0%{transform:translateX(40px);opacity:0}
-      100%{transform:translateX(0);opacity:1}
-    }
+    .core{display:grid;place-items:center;margin:8px 0 15px}
+    .orb{width:98px;height:98px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#7fb7ff,#1769e8 58%,#0f448f);box-shadow:0 0 0 12px rgba(23,105,232,.08),0 0 42px rgba(23,105,232,.3);position:relative}
+    .orb:after{content:"";position:absolute;inset:-8px;border:2px solid rgba(23,105,232,.2);border-radius:50%;animation:spin 5s linear infinite;border-top-color:#42d990}
+    @keyframes spin{to{transform:rotate(360deg)}} .orb span{font-size:35px}
+    .agent-state{text-align:center;font-size:13px;font-weight:900;color:#1d4d83;min-height:20px}
+    .analysis-list{display:grid;gap:8px;margin-top:13px}
+    .analysis-item{display:flex;align-items:flex-start;gap:9px;padding:10px;border-radius:12px;background:#f8fafc;border:1px solid #e7edf4;opacity:.28;transform:translateY(6px);transition:.35s}
+    .analysis-item.active,.analysis-item.done{opacity:1;transform:none}.analysis-item.done{background:#f1faf5;border-color:#d9ecdf}
+    .ai-dot{width:24px;height:24px;border-radius:8px;background:#edf3fb;color:var(--blue);display:grid;place-items:center;font-size:11px;font-weight:900;flex:0 0 auto}
+    .analysis-item.done .ai-dot{background:#e4f5ec;color:var(--green)}
+    .analysis-item b{display:block;font-size:12px}.analysis-item span{display:block;color:var(--muted);font-size:11px;margin-top:3px;line-height:1.35}
+    .extract-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+    .extract{padding:9px;border-radius:11px;background:var(--blue-soft);font-size:10px;font-weight:800;color:#214d7b;opacity:0;transform:scale(.94);transition:.3s}
+    .extract.show{opacity:1;transform:none}.extract strong{display:block;font-size:12px;color:#103b6b;margin-top:3px}
 
-    .kpi-row{
-      display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:16px
-    }
-    .kpi{
-      background:#f7fafc;border:1px solid #e4ebf3;border-radius:16px;padding:16px;min-width:0;
-    }
-    .kpi small{display:block;color:#6e8098;font-size:11px;font-weight:900;text-transform:uppercase}
-    .kpi strong{display:block;margin-top:8px;font-size:28px;color:#11213b}
-    .kpi p{margin:6px 0 0;font-size:12px;color:var(--muted)}
+    .review-box{display:grid;gap:10px}
+    .review-note{padding:12px;border-radius:14px;background:var(--yellow-soft);border:1px solid #f1e4ae;color:#7a6107;font-size:11px;line-height:1.45}
+    .review-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .field{padding:9px;border-radius:11px;background:#f8fafc;border:1px solid #e4ebf2;font-size:10px;opacity:.35;transition:.3s}
+    .field.show{opacity:1;background:#eef6ff;border-color:#cfe1f8}
+    .field label{display:block;color:var(--muted);font-weight:800}.field strong{display:block;margin-top:3px;font-size:12px;color:#123c6c}
+    .review-status{padding:11px;border-radius:13px;background:#f4f7fa;border:1px solid #e0e7ef;font-size:11px;color:#53657e;font-weight:850}
+    .review-status.ready{background:var(--green-soft);border-color:#d4eadc;color:#166f47}
+    .review-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .review-btn{border:0;border-radius:11px;padding:10px 12px;font-size:11px;font-weight:900;opacity:.35;pointer-events:none}
+    .review-btn.ready{opacity:1;pointer-events:auto}
+    .review-btn.primary{background:var(--green);color:#fff}.review-btn.secondary{background:#edf2f7;color:#354e6e}
 
-    .benefits{
-      background:#fff;color:var(--text);border-radius:26px;padding:24px;box-shadow:var(--shadow);margin-top:20px;
-    }
-    .benefits h3{margin:0 0 8px;font-size:26px}
-    .benefits p{margin:0;color:var(--muted);line-height:1.65}
-    .benefit-grid{
-      display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:18px
-    }
-    .benefit{
-      background:#f8fbff;border:1px solid #e4ebf3;border-radius:18px;padding:16px;min-width:0;
-    }
-    .benefit .icon{
-      width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#eaf3ff,#eefaf4);
-      display:grid;place-items:center;font-size:20px;margin-bottom:12px
-    }
-    .benefit strong{display:block;font-size:15px;color:#153a67}
-    .benefit span{display:block;color:var(--muted);font-size:13px;line-height:1.55;margin-top:6px}
+    .sheet-window{border:1px solid var(--line);border-radius:17px;overflow:hidden}
+    .sheet-toolbar{background:#f6f9fc;border-bottom:1px solid var(--line);padding:11px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+    .sheet-tab{background:#eaf7f1;color:#167348;border-radius:999px;padding:7px 10px;font-size:10px;font-weight:900}
+    .sheet-status{font-size:10px;color:var(--muted);font-weight:850}
+    .table-wrap{overflow:auto;max-width:100%}
+    table{border-collapse:collapse;width:100%;min-width:780px}
+    th,td{padding:10px 11px;border-right:1px solid #e4ebf3;border-bottom:1px solid #e4ebf3;text-align:left;font-size:10px}
+    th{background:#f8fafc;color:#60738d;text-transform:uppercase;font-size:9px}
+    .pending-row{opacity:.45}.new-row{background:linear-gradient(90deg,#e9f3ff,#eaf9f1);animation:rowIn .8s ease}
+    @keyframes rowIn{from{opacity:0;transform:translateX(35px)}to{opacity:1;transform:none}}
+    .sheet-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+    .summary{background:#f7fafc;border:1px solid #e5ecf3;border-radius:13px;padding:12px}
+    .summary small{display:block;color:var(--muted);font-size:9px;text-transform:uppercase;font-weight:900}
+    .summary strong{display:block;margin-top:5px;font-size:18px}
+    .success-card{display:none;margin-top:13px;border-radius:15px;padding:13px;background:var(--green-soft);border:1px solid #d7ebdf;color:#166f47}
+    .success-card.show{display:flex;gap:10px;align-items:center;animation:fade .45s ease}
+    @keyframes fade{from{opacity:0;transform:translateY(8px)}}
 
-    .footer-note{
-      margin-top:18px;text-align:center;color:#b7c6d9;font-size:12px
-    }
+    .event-strip{margin-top:18px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:15px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px}
+    .event-icon{width:42px;height:42px;border-radius:14px;background:rgba(255,255,255,.1);display:grid;place-items:center}
+    .event-strip b{display:block;font-size:13px}.event-strip span{display:block;color:#b9c7d7;font-size:12px;margin-top:3px}
+    .progress{height:9px;background:rgba(255,255,255,.12);border-radius:999px;overflow:hidden}
+    .progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#6ca7ff,#3ed88b);transition:width .6s}
+    .percent{font-weight:900;color:#ddebff}
+    .legend{margin-top:13px;text-align:center;color:#b6c4d6;font-size:11px}
 
-    @media(max-width:1250px){
-      .hero-grid,
-      .storyboard,
-      .control-room{
-        grid-template-columns:1fr;
-      }
-      .benefit-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+    @media(max-width:1400px){
+      .journey{grid-template-columns:1fr}
+      .connector{height:42px}.connector .line{width:4px;height:100%}.connector .line span{width:100%;height:0;transition:height .7s}.connector.active .line span{height:100%}.connector .arrow{right:auto;bottom:-8px;transform:rotate(90deg)}
     }
-
-    @media(max-width:760px){
-      body{overflow-x:auto}
-      .page{padding:18px 14px 44px}
-      .hero{padding:24px}
-      .hero h2{font-size:30px}
-      .stats,
-      .kpi-row,
-      .benefit-grid,
-      .form-grid{grid-template-columns:1fr}
-      .panel,.benefits{padding:18px}
-      .top-actions{width:100%}
-      .top-actions .btn{flex:1}
+    @media(max-width:700px){
+      .page{padding:14px}.intro h2{font-size:28px}.actions{width:100%}.actions .btn{flex:1}
+      .sheet-summary,.review-fields{grid-template-columns:1fr}
     }
   </style>
 </head>
 <body>
-  <div class="blobs">
-    <div class="blob b1"></div>
-    <div class="blob b2"></div>
-    <div class="blob b3"></div>
-  </div>
-
-  <div class="page">
-    <div class="topbar">
-      <div class="brand">
-        <div class="brand-mark">✓</div>
-        <div>
-          <h1>Controle de Pagamentos</h1>
-          <p>Demonstração visual do fluxo automatizado</p>
-        </div>
-      </div>
-      <div class="top-actions">
-        <button class="btn btn-primary glow" onclick="startShow()">▶ Iniciar demonstração automática</button>
-        <button class="btn btn-light" onclick="resetShow()">↻ Reiniciar</button>
-      </div>
+<div class="page">
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark">✓</div>
+      <div><h1>Fluxo de Pagamentos</h1><p>Demonstração da automação com conferência humana</p></div>
     </div>
+    <div class="actions">
+      <span class="status">Fluxo disponível</span>
+      <button class="btn btn-primary" onclick="startFlow()">▶ Iniciar demonstração</button>
+      <button class="btn btn-light" onclick="resetFlow()">↻ Reiniciar</button>
+    </div>
+  </header>
 
-    <section class="hero">
-      <div class="hero-grid">
-        <div>
-          <h2>Do comprovante enviado no WhatsApp ao lançamento pronto na planilha.</h2>
-          <p>O sistema recebe o comprovante, identifica as principais informações, organiza os dados e prepara o lançamento para conferência antes do registro final na aba “COMPRAS REALIZADAS”.</p>
-          <div class="hero-badges">
-            <span class="hero-badge">Mais agilidade no dia a dia</span>
-            <span class="hero-badge">Menos trabalho manual</span>
-            <span class="hero-badge">Mais controle dos pagamentos</span>
-          </div>
+  <section class="intro">
+    <h2>Da mensagem recebida até o lançamento na planilha, com segurança antes de registrar.</h2>
+    <p>O comprovante chega pelo WhatsApp, as informações são lidas e organizadas automaticamente, a equipe confere os campos principais e só então o lançamento é enviado para a aba “COMPRAS REALIZADAS”.</p>
+  </section>
+
+  <section class="journey">
+    <article class="panel">
+      <div class="panel-head">
+        <div><h3>1. Mensagem recebida</h3><p>O comprovante chega pelo WhatsApp.</p></div>
+        <span class="panel-badge">Entrada automática</span>
+      </div>
+      <div class="phone">
+        <div class="phone-top">
+          <div class="avatar">JS</div>
+          <div><strong>João Silva</strong><small>online</small></div>
         </div>
-
-        <div class="mock-live">
-          <div class="live-head">
-            <div>
-              <b>Fluxo em tempo real</b>
-              <div style="font-size:12px;color:#c8d6e6;margin-top:4px">Acompanhe a automação funcionando.</div>
+        <div class="chat">
+          <div class="bubble" id="msg1">Olá! Segue o comprovante referente ao pagamento do orçamento analítico.<span class="time">18:07</span></div>
+          <div class="bubble" id="msg2">
+            Pagamento realizado.
+            <div class="file-card">
+              <div class="file-icon">📄</div>
+              <div><strong>comprovante_pix.pdf</strong><br><small>PDF • 284 KB</small></div>
             </div>
-            <span class="live-badge">Ativo</span>
+            <span class="time">18:07 ✓✓</span>
           </div>
-          <div class="mini-chat">
-            <div class="mini-chat-top">
-              <div class="ava">JS</div>
-              <div>
-                <strong style="display:block;font-size:13px">João Silva</strong>
-                <small style="color:#70819a">Responsável pelo envio</small>
-              </div>
-            </div>
-            <div class="chat-body">
-              <div class="bubble">Olá! Segue o comprovante referente ao pagamento do orçamento analítico.</div>
-              <div class="bubble right file">📄 comprovante_pix.pdf<br><small>R$ 2.250,00 • enviado agora</small></div>
-              <div class="typing" id="heroTyping"><span></span><span></span><span></span></div>
-              <div class="bubble" id="heroReply" style="display:none">✅ Comprovante recebido. As informações foram organizadas e estão prontas para conferência.</div>
-            </div>
-          </div>
+          <div class="typing" id="typing"><i></i><i></i><i></i></div>
+          <div class="bubble sent" id="msgReply">✅ Comprovante recebido e registrado após conferência.<span class="time">18:07 ✓✓</span></div>
         </div>
       </div>
-    </section>
+    </article>
 
-    <section class="stats">
-      <div class="stat">
-        <small>Comprovantes organizados</small>
-        <strong id="statDocs">0</strong>
-        <p>Exemplo visual de processamento mensal.</p>
-      </div>
-      <div class="stat">
-        <small>Lançamentos preparados</small>
-        <strong id="statRows">0</strong>
-        <p>Prontos para conferência.</p>
-      </div>
-      <div class="stat">
-        <small>Redução de retrabalho</small>
-        <strong id="statGain">0%</strong>
-        <p>Menos digitação e menos risco de esquecimento.</p>
-      </div>
-      <div class="stat">
-        <small>Tempo economizado</small>
-        <strong id="statTime">0h</strong>
-        <p>Mais tempo para acompanhar a operação.</p>
-      </div>
-    </section>
+    <div class="connector" id="connector1"><div class="line"><span></span></div><div class="arrow">›</div></div>
 
-    <section class="storyboard">
-      <div class="panel">
-        <h3>O que está acontecendo agora</h3>
-        <p>Cada etapa aparece em sequência para facilitar a visualização do fluxo.</p>
+    <article class="panel">
+      <div class="panel-head">
+        <div><h3>2. Leitura e organização automática</h3><p>As informações são identificadas e estruturadas.</p></div>
+        <span class="panel-badge">Leitura automática</span>
+      </div>
+      <div class="core"><div class="orb"><span>✦</span></div></div>
+      <div class="agent-state" id="agentState">Aguardando nova mensagem</div>
 
-        <div class="progress-top">
-          <div class="progress-label" id="progressLabel">Aguardando início da demonstração</div>
-          <div style="font-size:12px;font-weight:900;color:#67809d" id="progressPercent">0%</div>
-        </div>
-        <div class="progress-bar"><span id="mainProgress"></span></div>
-
-        <div class="timeline">
-          <div class="step" id="step1"><div class="step-num">1</div><div><b>Mensagem recebida</b><span>O comprovante chegou pelo WhatsApp.</span></div></div>
-          <div class="step" id="step2"><div class="step-num">2</div><div><b>Documento lido</b><span>O valor, a data e o fornecedor são identificados.</span></div></div>
-          <div class="step" id="step3"><div class="step-num">3</div><div><b>Campos organizados</b><span>As informações são distribuídas na estrutura da planilha.</span></div></div>
-          <div class="step" id="step4"><div class="step-num">4</div><div><b>Conferência de repetição</b><span>O sistema verifica se já existe lançamento semelhante.</span></div></div>
-          <div class="step" id="step5"><div class="step-num">5</div><div><b>Tela de revisão preenchida</b><span>A equipe recebe tudo pronto para confirmar.</span></div></div>
-          <div class="step" id="step6"><div class="step-num">6</div><div><b>Lançamento preparado</b><span>O registro fica pronto para entrar em “COMPRAS REALIZADAS”.</span></div></div>
-        </div>
+      <div class="analysis-list">
+        <div class="analysis-item" id="a1"><div class="ai-dot">1</div><div><b>Abrindo o comprovante</b><span>Documento recebido e preparado.</span></div></div>
+        <div class="analysis-item" id="a2"><div class="ai-dot">2</div><div><b>Identificando os dados</b><span>Valor, data, forma e fornecedor.</span></div></div>
+        <div class="analysis-item" id="a3"><div class="ai-dot">3</div><div><b>Verificando repetição</b><span>Comparação com registros anteriores.</span></div></div>
+        <div class="analysis-item" id="a4"><div class="ai-dot">4</div><div><b>Preparando para conferência</b><span>Campos alinhados à planilha.</span></div></div>
       </div>
 
-      <div class="panel">
-        <h3>Leitura do comprovante</h3>
-        <p>Os principais dados aparecem visualmente à medida que o comprovante é processado.</p>
+      <div class="extract-grid">
+        <div class="extract" id="e1">Valor<strong>R$ 2.250,00</strong></div>
+        <div class="extract" id="e2">Data<strong>12/11/2025</strong></div>
+        <div class="extract" id="e3">Forma<strong>Pix</strong></div>
+        <div class="extract" id="e4">Fornecedor<strong>BIMais Soluções</strong></div>
+        <div class="extract" id="e5">Descrição<strong>Orçamento analítico — 50%</strong></div>
+        <div class="extract" id="e6">Confiança<strong>96%</strong></div>
+      </div>
+    </article>
 
-        <div class="receipt-card">
-          <div class="scan-line" id="scanLine"></div>
-          <div class="receipt-paper">
-            <h4>COMPROVANTE DE PAGAMENTO</h4>
-            <div class="receipt-amount">R$ 2.250,00</div>
-            <div class="receipt-line"><span>Data</span><strong>12/11/2025</strong></div>
-            <div class="receipt-line"><span>Horário</span><strong>14:42</strong></div>
-            <div class="receipt-line"><span>Pagador</span><strong>João Silva</strong></div>
-            <div class="receipt-line"><span>Recebedor</span><strong>BIMais Soluções</strong></div>
-            <div class="receipt-line"><span>Forma</span><strong>Pix</strong></div>
-            <div class="receipt-line"><span>Identificação</span><strong>E123456789</strong></div>
-          </div>
+    <div class="connector" id="connector2"><div class="line"><span></span></div><div class="arrow">›</div></div>
+
+    <article class="panel">
+      <div class="panel-head">
+        <div><h3>3. Conferência rápida</h3><p>A equipe confirma o que precisa antes do registro.</p></div>
+        <span class="panel-badge">Controle humano</span>
+      </div>
+
+      <div class="review-box">
+        <div class="review-note">O sistema preenche o que consegue identificar. Etapa e código ficam destacados para confirmação antes do lançamento.</div>
+
+        <div class="review-fields">
+          <div class="field" id="f1"><label>Etapa</label><strong>ETAPA 2</strong></div>
+          <div class="field" id="f2"><label>Status</label><strong>Pago</strong></div>
+          <div class="field" id="f3"><label>Forma</label><strong>Pix</strong></div>
+          <div class="field" id="f4"><label>Pagamento</label><strong>12/11/2025</strong></div>
+          <div class="field" id="f5"><label>Código</label><strong>Conferir</strong></div>
+          <div class="field" id="f6"><label>Tipologia</label><strong>Outros</strong></div>
+          <div class="field" id="f7"><label>Descrição</label><strong>Orçamento analítico — 50%</strong></div>
+          <div class="field" id="f8"><label>Fornecedor</label><strong>BIMais Soluções</strong></div>
+          <div class="field" id="f9"><label>Valor</label><strong>R$ 2.250,00</strong></div>
+          <div class="field" id="f10"><label>Observações</label><strong>Recebido pelo WhatsApp</strong></div>
         </div>
 
-        <div class="chips">
-          <div class="chip" id="chip1">Valor: R$ 2.250,00</div>
-          <div class="chip" id="chip2">Data: 12/11/2025</div>
-          <div class="chip" id="chip3">Forma: Pix</div>
-          <div class="chip green" id="chip4">Fornecedor: BIMais Soluções</div>
-          <div class="chip" id="chip5">Descrição sugerida: Orçamento analítico — 50%</div>
-          <div class="chip warn" id="chip6">Aguardando conferência de etapa e código</div>
+        <div class="review-status" id="reviewStatus">Aguardando o preenchimento automático.</div>
+        <div class="review-actions">
+          <button class="review-btn secondary" id="reviewBtn">Revisar campos</button>
+          <button class="review-btn primary" id="confirmBtn" onclick="confirmReview()">Confirmar lançamento</button>
         </div>
       </div>
-    </section>
+    </article>
 
-    <section class="control-room">
-      <div class="panel">
-        <h3>Tela de conferência</h3>
-        <p>Os campos são preenchidos automaticamente e ficam prontos para revisão antes do lançamento.</p>
+    <div class="connector" id="connector3"><div class="line"><span></span></div><div class="arrow">›</div></div>
 
-        <div class="confidence">
-          <strong>Leitura com alta confiança</strong>
-          <span id="confidenceValue">0%</span>
+    <article class="panel">
+      <div class="panel-head">
+        <div><h3>4. COMPRAS REALIZADAS</h3><p>O lançamento entra somente após a confirmação.</p></div>
+        <span class="panel-badge">Destino seguro</span>
+      </div>
+
+      <div class="sheet-window">
+        <div class="sheet-toolbar">
+          <span class="sheet-tab">COMPRAS REALIZADAS</span>
+          <span class="sheet-status" id="sheetStatus">Aguardando confirmação</span>
         </div>
-
-        <div class="form-grid">
-          <div class="field" id="field-etapa">
-            <label>Etapa</label>
-            <select id="inputEtapa">
-              <option value="">Selecionar</option>
-              <option>ETAPA 1</option>
-              <option selected>ETAPA 2</option>
-              <option>ETAPA 3</option>
-            </select>
-          </div>
-          <div class="field" id="field-status">
-            <label>Status</label>
-            <select id="inputStatus">
-              <option>Solicitado</option>
-              <option selected>Pago</option>
-            </select>
-          </div>
-          <div class="field" id="field-forma">
-            <label>Forma de pagamento</label>
-            <input id="inputForma" value="" />
-          </div>
-          <div class="field" id="field-solic">
-            <label>Data da solicitação</label>
-            <input id="inputSolic" value="" />
-          </div>
-          <div class="field" id="field-pag">
-            <label>Data do pagamento</label>
-            <input id="inputPag" value="" />
-          </div>
-          <div class="field" id="field-codigo">
-            <label>Código</label>
-            <input id="inputCodigo" value="" placeholder="Conferir" />
-          </div>
-          <div class="field" id="field-tipologia">
-            <label>Tipologia</label>
-            <input id="inputTipologia" value="" />
-          </div>
-          <div class="field" id="field-desc">
-            <label>Descrição</label>
-            <input id="inputDesc" value="" />
-          </div>
-          <div class="field" id="field-fornecedor">
-            <label>Fornecedor</label>
-            <input id="inputFornecedor" value="" />
-          </div>
-          <div class="field" id="field-valor">
-            <label>Valor</label>
-            <input id="inputValor" value="" />
-          </div>
-          <div class="field full" id="field-obs">
-            <label>Observações</label>
-            <input id="inputObs" value="" placeholder="Comprovante recebido pelo WhatsApp." />
-          </div>
-        </div>
-
-        <div class="checks">
-          <div class="check" id="check1"><div class="dot">✓</div><div><strong style="font-size:13px">Comprovante recebido</strong><div style="font-size:12px;color:#6e7e95">Arquivo pronto para análise.</div></div></div>
-          <div class="check" id="check2"><div class="dot">✓</div><div><strong style="font-size:13px">Fornecedor identificado</strong><div style="font-size:12px;color:#6e7e95">BIMais Soluções reconhecido.</div></div></div>
-          <div class="check" id="check3"><div class="dot">✓</div><div><strong style="font-size:13px">Possível repetição verificada</strong><div style="font-size:12px;color:#6e7e95">Nenhum lançamento igual encontrado.</div></div></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Etapa</th><th>Status</th><th>Forma</th><th>Pagamento</th><th>Código</th>
+                <th>Tipologia</th><th>Descrição</th><th>Fornecedor</th><th>Valor</th><th>Observações</th>
+              </tr>
+            </thead>
+            <tbody id="sheetBody">
+              <tr>
+                <td>ETAPA 1</td><td>Pago</td><td>Pix</td><td>11/11/2025</td><td>AC-102</td>
+                <td>Material</td><td>Cimento CP II</td><td>Fornecedor Exemplo</td><td>R$ 1.380,00</td><td>Validado</td>
+              </tr>
+              <tr class="pending-row" id="placeholderRow">
+                <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>Aguardando conferência</td><td>—</td><td>—</td><td>—</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
-      <div class="panel">
-        <h3>Resultado final na planilha</h3>
-        <p>Ao final da conferência, o lançamento aparece na aba “COMPRAS REALIZADAS” com destaque visual.</p>
-
-        <div class="sheet-card">
-          <div class="sheet-top">
-            <div class="sheet-badge">Aba segura: COMPRAS REALIZADAS</div>
-            <button class="btn btn-primary" id="insertBtn" onclick="insertRowManually()">Inserir lançamento agora</button>
-          </div>
-
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Etapa</th>
-                  <th>Status</th>
-                  <th>Forma</th>
-                  <th>Solicitação</th>
-                  <th>Pagamento</th>
-                  <th>Código</th>
-                  <th>Tipologia</th>
-                  <th>Descrição</th>
-                  <th>Fornecedor</th>
-                  <th>Valor</th>
-                  <th>Observações</th>
-                </tr>
-              </thead>
-              <tbody id="sheetRows">
-                <tr>
-                  <td>ETAPA 1</td>
-                  <td><span class="badge ok">Pago</span></td>
-                  <td>Pix</td>
-                  <td>10/11/2025</td>
-                  <td>11/11/2025</td>
-                  <td>AC-102</td>
-                  <td>Material</td>
-                  <td>Cimento CP II</td>
-                  <td>Fornecedor Exemplo</td>
-                  <td>R$ 1.380,00</td>
-                  <td>Comprovante validado</td>
-                </tr>
-                <tr>
-                  <td>ETAPA 2</td>
-                  <td><span class="badge wait">Solicitado</span></td>
-                  <td>Transferência</td>
-                  <td>12/11/2025</td>
-                  <td>—</td>
-                  <td>SV-220</td>
-                  <td>Serviço</td>
-                  <td>Mão de obra civil</td>
-                  <td>Prestador Exemplo</td>
-                  <td>R$ 5.000,00</td>
-                  <td>Aguardando pagamento</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="kpi-row">
-            <div class="kpi">
-              <small>Recebido por WhatsApp</small>
-              <strong id="kpiMsg">0</strong>
-              <p>Comprovante detectado na conversa.</p>
-            </div>
-            <div class="kpi">
-              <small>Campos preenchidos</small>
-              <strong id="kpiFields">0/10</strong>
-              <p>Prontos para revisão.</p>
-            </div>
-            <div class="kpi">
-              <small>Situação do lançamento</small>
-              <strong id="kpiState">Aguardando</strong>
-              <p>Atualizado ao longo da demonstração.</p>
-            </div>
-          </div>
-        </div>
+      <div class="sheet-summary">
+        <div class="summary"><small>Mensagem recebida</small><strong id="s1">0</strong></div>
+        <div class="summary"><small>Campos identificados</small><strong id="s2">0/10</strong></div>
+        <div class="summary"><small>Situação</small><strong id="s3">Aguardando</strong></div>
       </div>
-    </section>
 
-    <section class="benefits">
-      <h3>Benefícios do fluxo</h3>
-      <p>Uma rotina mais organizada, com menos etapas manuais e mais clareza para acompanhar os pagamentos.</p>
-
-      <div class="benefit-grid">
-        <div class="benefit">
-          <div class="icon">⚡</div>
-          <strong>Mais agilidade</strong>
-          <span>Os dados chegam organizados para conferência, reduzindo o tempo gasto entre mensagens e planilhas.</span>
-        </div>
-        <div class="benefit">
-          <div class="icon">✓</div>
-          <strong>Menos erro manual</strong>
-          <span>O preenchimento automático diminui retrabalho e reduz o risco de digitação incorreta.</span>
-        </div>
-        <div class="benefit">
-          <div class="icon">📄</div>
-          <strong>Centralização</strong>
-          <span>Comprovantes e informações ficam conectados ao lançamento, facilitando o acompanhamento.</span>
-        </div>
-        <div class="benefit">
-          <div class="icon">📊</div>
-          <strong>Mais controle</strong>
-          <span>Os pagamentos ficam visíveis em um único fluxo de registro, revisão e acompanhamento.</span>
-        </div>
+      <div class="success-card" id="successCard">
+        <div style="font-size:22px">✓</div>
+        <div><strong>Lançamento concluído</strong><div style="font-size:12px;margin-top:3px">O registro foi adicionado à aba “COMPRAS REALIZADAS”.</div></div>
       </div>
-    </section>
+    </article>
+  </section>
 
-    <div class="footer-note">Demonstração visual. Nenhum dado real é enviado ou salvo neste arquivo.</div>
-  </div>
+  <section class="event-strip">
+    <div class="event-icon" id="eventIcon">◷</div>
+    <div>
+      <b id="eventTitle">Pronto para iniciar</b>
+      <span id="eventText">Clique em “Iniciar demonstração” para acompanhar todo o fluxo.</span>
+      <div class="progress"><span id="mainProgress"></span></div>
+    </div>
+    <div class="percent" id="percent">0%</div>
+  </section>
 
-  <script>
-    const state = { started:false, rowInserted:false, timers:[] };
+  <div class="legend">Demonstração visual. Nenhuma mensagem real é enviada e nenhum dado externo é alterado.</div>
+</div>
 
-    function clearAllTimers(){
-      state.timers.forEach(t => clearTimeout(t));
-      state.timers = [];
-    }
+<script>
+const timers=[];
+let awaitingConfirmation=false;
+function later(fn,ms){timers.push(setTimeout(fn,ms))}
+function clearTimers(){while(timers.length)clearTimeout(timers.pop())}
+function eventUpdate(icon,title,text,pct){
+  eventIcon.textContent=icon;eventTitle.textContent=title;eventText.textContent=text;
+  mainProgress.style.width=pct+"%";percent.textContent=pct+"%";
+}
+function activateAnalysis(n,state){
+  for(let i=1;i<=4;i++){
+    const el=document.getElementById("a"+i);
+    el.classList.remove("active");
+    if(i<n)el.classList.add("done");
+  }
+  document.getElementById("a"+n).classList.add("active");
+  agentState.textContent=state;
+}
+function showExtract(n){document.getElementById("e"+n).classList.add("show")}
+function showField(n){document.getElementById("f"+n).classList.add("show");s2.textContent=n+"/10"}
+function resetFlow(){
+  clearTimers(); awaitingConfirmation=false;
+  [msg1,msg2,msgReply].forEach(x=>x.classList.remove("show"));
+  typing.classList.remove("show");
+  [connector1,connector2,connector3].forEach(x=>x.classList.remove("active"));
+  for(let i=1;i<=4;i++)document.getElementById("a"+i).classList.remove("active","done");
+  for(let i=1;i<=6;i++)document.getElementById("e"+i).classList.remove("show");
+  for(let i=1;i<=10;i++)document.getElementById("f"+i).classList.remove("show");
+  agentState.textContent="Aguardando nova mensagem";
+  reviewStatus.textContent="Aguardando o preenchimento automático.";
+  reviewStatus.classList.remove("ready");
+  reviewBtn.classList.remove("ready");confirmBtn.classList.remove("ready");
+  sheetStatus.textContent="Aguardando confirmação";
+  s1.textContent="0";s2.textContent="0/10";s3.textContent="Aguardando";
+  successCard.classList.remove("show");
+  const old=document.getElementById("newPaymentRow"); if(old) old.remove();
+  placeholderRow.style.display="";
+  eventUpdate("◷","Pronto para iniciar","Clique em “Iniciar demonstração” para acompanhar todo o fluxo.",0);
+}
+function startFlow(){
+  resetFlow();
 
-    function setLater(fn, ms){
-      const id = setTimeout(fn, ms);
-      state.timers.push(id);
-    }
+  later(()=>{msg1.classList.add("show");s1.textContent="1";eventUpdate("💬","Nova mensagem recebida","João Silva enviou uma mensagem pelo WhatsApp.",8)},500);
+  later(()=>{msg2.classList.add("show");eventUpdate("📄","Comprovante recebido","O arquivo comprovante_pix.pdf chegou automaticamente.",16)},1500);
+  later(()=>{connector1.classList.add("active");eventUpdate("→","Enviando para leitura automática","A mensagem e o comprovante foram encaminhados para organização.",24)},2600);
 
-    function animateCount(el, end, suffix="", duration=1200){
-      const stepTime = 16;
-      const totalSteps = Math.max(1, Math.round(duration / stepTime));
-      let step = 0;
-      const inc = end / totalSteps;
-      const timer = setInterval(() => {
-        step++;
-        const val = Math.min(end, Math.round(step * inc));
-        el.textContent = val + suffix;
-        if(step >= totalSteps) clearInterval(timer);
-      }, stepTime);
-    }
+  later(()=>{activateAnalysis(1,"Abrindo o comprovante");eventUpdate("✦","Leitura iniciada","O documento está sendo preparado.",32)},3500);
+  later(()=>{activateAnalysis(2,"Identificando os dados");showExtract(1);showExtract(2);eventUpdate("🔎","Valor e data identificados","R$ 2.250,00 em 12/11/2025.",42)},4600);
+  later(()=>{showExtract(3);showExtract(4);eventUpdate("🔎","Forma e fornecedor identificados","Pagamento Pix para BIMais Soluções.",52)},5600);
+  later(()=>{showExtract(5);showExtract(6);activateAnalysis(3,"Verificando possíveis repetições");eventUpdate("✓","Verificação concluída","Nenhum comprovante igual foi encontrado.",62)},6700);
+  later(()=>{activateAnalysis(4,"Preparando para conferência");eventUpdate("▦","Organizando os campos","O lançamento está sendo preparado para a equipe.",70)},7800);
 
-    function setProgress(pct, label){
-      document.getElementById("mainProgress").style.width = pct + "%";
-      document.getElementById("progressPercent").textContent = pct + "%";
-      document.getElementById("progressLabel").textContent = label;
-    }
+  later(()=>{connector2.classList.add("active");eventUpdate("→","Enviando para conferência","Os campos serão exibidos para confirmação.",76)},8600);
+  [1,2,3,4,5,6,7,8,9,10].forEach((n,index)=>later(()=>showField(n),9200+index*180));
+  later(()=>{
+    reviewStatus.textContent="Campos preenchidos. Etapa e código devem ser confirmados antes do lançamento.";
+    reviewStatus.classList.add("ready");
+    reviewBtn.classList.add("ready");confirmBtn.classList.add("ready");
+    s3.textContent="Aguardando conferência";
+    awaitingConfirmation=true;
+    eventUpdate("👤","Aguardando confirmação humana","A equipe confere os campos principais antes de registrar.",84);
+  },11100);
+}
+function confirmReview(){
+  if(!awaitingConfirmation)return;
+  awaitingConfirmation=false;
+  reviewBtn.classList.remove("ready");confirmBtn.classList.remove("ready");
+  reviewStatus.textContent="Conferência concluída. Lançamento autorizado.";
+  connector3.classList.add("active");
+  sheetStatus.textContent="Recebendo lançamento confirmado";
+  s3.textContent="Enviando";
+  eventUpdate("→","Conferência concluída","O lançamento confirmado está sendo enviado para a planilha.",90);
 
-    function activateStep(n){
-      for(let i=1;i<=6;i++){
-        const el = document.getElementById("step"+i);
-        el.classList.remove("active");
-        if(i < n) el.classList.add("done");
-        if(i >= n) el.classList.remove("done");
-      }
-      document.getElementById("step"+n).classList.add("active");
-    }
+  later(()=>{
+    placeholderRow.style.display="none";
+    const tr=document.createElement("tr");tr.id="newPaymentRow";tr.className="new-row";
+    tr.innerHTML="<td>ETAPA 2</td><td>Pago</td><td>Pix</td><td>12/11/2025</td><td>Conferir</td><td>Outros</td><td>Orçamento analítico — 50%</td><td>BIMais Soluções</td><td>R$ 2.250,00</td><td>Recebido pelo WhatsApp</td>";
+    sheetBody.prepend(tr);
+    sheetStatus.textContent="Lançamento inserido";s3.textContent="Lançado";
+    eventUpdate("✓","Lançamento inserido","O pagamento foi registrado em COMPRAS REALIZADAS.",96);
+  },1200);
 
-    function showChip(n){ document.getElementById("chip"+n).classList.add("show"); }
-    function flashField(id){
-      const el = document.getElementById(id);
-      el.classList.remove("flash");
-      void el.offsetWidth;
-      el.classList.add("flash");
-    }
-    function fillField(inputId, value, fieldId){
-      const input = document.getElementById(inputId);
-      input.value = value;
-      flashField(fieldId);
-    }
-    function showCheck(n){ document.getElementById("check"+n).classList.add("show"); }
+  later(()=>{
+    typing.classList.add("show");
+    eventUpdate("💬","Preparando confirmação","O sistema está respondendo ao remetente.",98);
+  },2300);
 
-    function resetShow(){
-      clearAllTimers();
-      state.started = false;
-      state.rowInserted = false;
-
-      document.getElementById("heroTyping").style.display = "flex";
-      document.getElementById("heroReply").style.display = "none";
-
-      document.getElementById("statDocs").textContent = "0";
-      document.getElementById("statRows").textContent = "0";
-      document.getElementById("statGain").textContent = "0%";
-      document.getElementById("statTime").textContent = "0h";
-
-      setProgress(0, "Aguardando início da demonstração");
-      for(let i=1;i<=6;i++){
-        const step = document.getElementById("step"+i);
-        step.classList.remove("active","done");
-      }
-      document.getElementById("scanLine").classList.remove("run");
-
-      for(let i=1;i<=6;i++) document.getElementById("chip"+i).classList.remove("show");
-
-      document.getElementById("confidenceValue").textContent = "0%";
-      document.getElementById("inputForma").value = "";
-      document.getElementById("inputSolic").value = "";
-      document.getElementById("inputPag").value = "";
-      document.getElementById("inputCodigo").value = "";
-      document.getElementById("inputTipologia").value = "";
-      document.getElementById("inputDesc").value = "";
-      document.getElementById("inputFornecedor").value = "";
-      document.getElementById("inputValor").value = "";
-      document.getElementById("inputObs").value = "Comprovante recebido pelo WhatsApp.";
-      for(let i=1;i<=3;i++) document.getElementById("check"+i).classList.remove("show");
-
-      document.getElementById("kpiMsg").textContent = "0";
-      document.getElementById("kpiFields").textContent = "0/10";
-      document.getElementById("kpiState").textContent = "Aguardando";
-
-      const rows = document.querySelectorAll("#sheetRows tr.new-row");
-      rows.forEach(r => r.remove());
-      const btn = document.getElementById("insertBtn");
-      btn.disabled = false;
-      btn.textContent = "Inserir lançamento agora";
-      btn.classList.add("glow");
-    }
-
-    function startShow(){
-      resetShow();
-      state.started = true;
-
-      animateCount(document.getElementById("statDocs"), 128, "", 1000);
-      setLater(() => animateCount(document.getElementById("statRows"), 117, "", 1000), 280);
-      setLater(() => animateCount(document.getElementById("statGain"), 78, "%", 1000), 420);
-      setLater(() => animateCount(document.getElementById("statTime"), 31, "h", 1000), 620);
-
-      setLater(() => {
-        document.getElementById("heroTyping").style.display = "none";
-        document.getElementById("heroReply").style.display = "block";
-      }, 4600);
-
-      setLater(() => {activateStep(1); setProgress(12, "Mensagem recebida pelo WhatsApp"); document.getElementById("kpiMsg").textContent = "1";}, 400);
-      setLater(() => {activateStep(2); setProgress(30, "Lendo o comprovante"); document.getElementById("scanLine").classList.add("run"); showChip(1); showChip(2);}, 1800);
-      setLater(() => {showChip(3); showChip(4);}, 2900);
-      setLater(() => {
-        activateStep(3);
-        setProgress(48, "Organizando os campos da planilha");
-        showChip(5);
-        fillField("inputForma","Pix","field-forma");
-        fillField("inputPag","12/11/2025","field-pag");
-        fillField("inputFornecedor","BIMais Soluções","field-fornecedor");
-        fillField("inputValor","R$ 2.250,00","field-valor");
-        document.getElementById("confidenceValue").textContent = "96%";
-        document.getElementById("kpiFields").textContent = "4/10";
-      }, 3800);
-      setLater(() => {
-        fillField("inputTipologia","Outros","field-tipologia");
-        fillField("inputDesc","Orçamento analítico — 50%","field-desc");
-        fillField("inputSolic","12/11/2025","field-solic");
-        document.getElementById("kpiFields").textContent = "7/10";
-        showCheck(1); showCheck(2);
-      }, 5100);
-      setLater(() => {
-        activateStep(4);
-        setProgress(64, "Verificando se o comprovante já foi lançado");
-        showChip(6);
-        showCheck(3);
-        document.getElementById("scanLine").classList.remove("run");
-        document.getElementById("kpiState").textContent = "Verificando";
-      }, 6500);
-      setLater(() => {
-        activateStep(5);
-        setProgress(82, "Preparando a tela de conferência");
-        fillField("inputCodigo","Conferir","field-codigo");
-        document.getElementById("kpiFields").textContent = "8/10";
-        document.getElementById("kpiState").textContent = "Pronto para revisar";
-      }, 8100);
-      setLater(() => {
-        activateStep(6);
-        setProgress(100, "Lançamento pronto para entrar na planilha");
-        document.getElementById("kpiState").textContent = "Pronto para lançar";
-      }, 9700);
-      setLater(() => {insertRowManually();}, 11200);
-    }
-
-    function insertRowManually(){
-      if(state.rowInserted) return;
-      state.rowInserted = true;
-      const btn = document.getElementById("insertBtn");
-      btn.disabled = true;
-      btn.textContent = "Lançamento inserido";
-      btn.classList.remove("glow");
-
-      const tr = document.createElement("tr");
-      tr.className = "new-row";
-      tr.innerHTML = `
-        <td>ETAPA 2</td>
-        <td><span class="badge ok">Pago</span></td>
-        <td>Pix</td>
-        <td>12/11/2025</td>
-        <td>12/11/2025</td>
-        <td>Conferir</td>
-        <td>Outros</td>
-        <td>Orçamento analítico — 50%</td>
-        <td>BIMais Soluções</td>
-        <td>R$ 2.250,00</td>
-        <td>Comprovante recebido pelo WhatsApp</td>
-      `;
-      document.getElementById("sheetRows").prepend(tr);
-      document.getElementById("kpiState").textContent = "Lançado";
-    }
-
-    resetShow();
-  </script>
+  later(()=>{
+    typing.classList.remove("show");msgReply.classList.add("show");successCard.classList.add("show");
+    eventUpdate("✓","Fluxo concluído","Mensagem recebida, organizada, conferida e registrada com sucesso.",100);
+  },3400);
+}
+resetFlow();
+</script>
 </body>
 </html>
