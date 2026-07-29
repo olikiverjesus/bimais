@@ -1,11 +1,12 @@
-from pathlib import Path
-
-src = Path("/mnt/data/prototipo_compras_realizadas.html")
-html = src.read_text(encoding="utf-8")
-
-html = html.replace(
-".toast{position:fixed;right:24px;bottom:24px;background:#0d2c50;color:#fff;padding:14px 16px;border-radius:13px;box-shadow:var(--shadow);opacity:0;transform:translateY(90px);transition:.25s}.toast.show{opacity:1;transform:translateY(0)}",
-""".toast{position:fixed;right:24px;bottom:24px;background:#0d2c50;color:#fff;padding:14px 16px;border-radius:13px;box-shadow:var(--shadow);opacity:0;transform:translateY(90px);transition:.25s;z-index:80}.toast.show{opacity:1;transform:translateY(0)}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Controle de Pagamentos — Protótipo</title>
+<style>
+:root{--navy:#0c2340;--blue:#2364d2;--green:#14945f;--bg:#f4f7fb;--card:#fff;--text:#17243a;--muted:#6d7b91;--line:#dfe7f0;--warn:#b87500;--shadow:0 18px 50px rgba(24,43,74,.10)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(circle at 5% 0%,#eaf2ff,transparent 28%),var(--bg);color:var(--text)}button,input,select,textarea{font:inherit}.layout{display:grid;grid-template-columns:252px 1fr;min-height:100vh}.sidebar{background:var(--navy);color:#fff;padding:24px 18px;display:flex;flex-direction:column;gap:22px}.brand{display:flex;gap:12px;align-items:center;padding:0 6px 20px;border-bottom:1px solid #ffffff1c}.logo{width:43px;height:43px;border-radius:14px;background:linear-gradient(135deg,#347df0,#18a36c);display:grid;place-items:center;font-weight:900}.brand b{display:block}.brand small{color:#afbdd0}.nav{display:grid;gap:7px}.nav button{border:0;background:transparent;color:#b7c4d6;text-align:left;padding:12px 13px;border-radius:12px;cursor:pointer;font-weight:650}.nav button.active,.nav button:hover{color:white;background:#ffffff13}.side-note{margin-top:auto;padding:15px;border-radius:15px;background:#ffffff0d;border:1px solid #ffffff16;font-size:12px;line-height:1.5;color:#c3cede}.main{padding:28px 34px 60px}.topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:22px}.topbar h1{font-size:27px;margin:0 0 5px}.topbar p{margin:0;color:var(--muted)}.online{padding:9px 12px;border-radius:999px;background:#e8f8f0;color:#0f7548;font-size:12px;font-weight:800}.online:before{content:"";display:inline-block;width:8px;height:8px;background:var(--green);border-radius:50%;margin-right:7px}.screen{display:none}.screen.active{display:block}.hero{background:linear-gradient(135deg,#174fa9,#2072cc 52%,#168d64);border-radius:25px;color:#fff;padding:31px;box-shadow:var(--shadow);overflow:hidden;position:relative}.hero:after{content:"";position:absolute;width:280px;height:280px;border-radius:50%;right:-100px;top:-120px;background:#ffffff12}.hero h2{margin:0 0 11px;font-size:32px;max-width:760px}.hero p{max-width:770px;color:#eaf2ff;line-height:1.6}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.btn{border:0;border-radius:12px;padding:12px 16px;font-weight:800;cursor:pointer}.btn.primary{background:var(--blue);color:#fff}.btn.light{background:#fff;color:#164e9f}.btn.soft{background:#edf3fb;color:#29415f}.btn.green{background:var(--green);color:white}.btn.warn{background:#fff4dc;color:#986000}.grid{display:grid;gap:18px}.grid3{grid-template-columns:repeat(3,1fr)}.card{background:var(--card);border:1px solid var(--line);border-radius:19px;padding:21px;box-shadow:0 9px 30px rgba(25,45,78,.06)}.metric{display:flex;justify-content:space-between;align-items:flex-start}.metric h3{font-size:14px;margin:0;color:#43516a}.metric strong{font-size:30px;display:block;margin-top:8px}.metric p,.card p{color:var(--muted);line-height:1.55}.icon{width:45px;height:45px;border-radius:14px;background:#edf4ff;color:var(--blue);display:grid;place-items:center;font-weight:900}.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.step{border:1px solid var(--line);border-radius:16px;padding:16px;background:#fff;min-height:150px}.num{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#fff;background:var(--blue);font-size:12px;font-weight:900;margin-bottom:10px}.step:nth-child(n+4) .num{background:var(--green)}.step b{display:block;font-size:14px}.step span{font-size:12px;color:var(--muted);line-height:1.45;display:block;margin-top:7px}.notice{margin-top:18px;border:1px solid #cfe6db;background:#effaf5;color:#136b45;border-radius:14px;padding:14px;font-size:13px}.upload-layout{display:grid;grid-template-columns:1.08fr .92fr;gap:20px}.drop{min-height:350px;border:2px dashed #aabed9;border-radius:18px;background:#fafdff;display:flex;align-items:center;justify-content:center;text-align:center;padding:25px}.drop.drag{border-color:var(--blue);background:#eef5ff}.drop .big{font-size:42px}.drop h3{margin:12px 0 7px}.file{color:#23538f;font-size:13px;font-weight:800;margin-top:12px}.process{display:none;margin-top:16px;border-radius:14px;background:#f7f9fc;border:1px solid var(--line);padding:15px}.process.show{display:block}.bar{height:9px;border-radius:99px;background:#e4ebf3;margin-top:10px;overflow:hidden}.bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--green));transition:.4s}.checklist{display:grid;gap:0}.check{display:flex;gap:11px;padding:13px 0;border-bottom:1px solid var(--line)}.check:last-child{border-bottom:0}.check i{font-style:normal;width:31px;height:31px;border-radius:10px;background:#eaf8f1;color:var(--green);display:grid;place-items:center;font-weight:900}.check b{font-size:13px}.check small{display:block;color:var(--muted);margin-top:4px}.review{display:grid;grid-template-columns:.82fr 1.18fr;gap:20px}.receipt-box{min-height:570px;border-radius:17px;background:#edf1f6;display:grid;place-items:center;padding:20px}.receipt{width:min(390px,100%);background:white;padding:28px;border-radius:9px;box-shadow:0 18px 45px #1e314026;font-family:ui-monospace,monospace}.receipt h4{text-align:center;margin:0 0 18px}.receipt .amount{text-align:center;font-size:25px;font-weight:900;padding:18px}.rline{display:flex;justify-content:space-between;gap:14px;padding:8px 0;border-bottom:1px dashed #d8dee8;font-size:12px}.review-banner{padding:13px;border-radius:13px;background:#fff8e7;color:#895900;border:1px solid #f0dca4;margin:15px 0;font-size:13px}.form{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}.field{display:grid;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:11px;font-weight:850;color:#4d5c73}.field input,.field select,.field textarea{border:1px solid #cbd6e3;border-radius:10px;padding:10px 11px;background:#fff;color:var(--text);width:100%}.field input:focus,.field select:focus,.field textarea:focus{outline:0;border-color:var(--blue);box-shadow:0 0 0 3px #2364d219}.locked{padding:12px 14px;border-radius:13px;background:#eef4fb;color:#35506f;font-size:12px;margin-bottom:15px}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:15px}table{border-collapse:collapse;width:100%;min-width:1240px;background:#fff}th,td{padding:13px 14px;border-bottom:1px solid var(--line);text-align:left;font-size:12px}th{background:#f7f9fc;color:#56647a;text-transform:uppercase;font-size:10px;letter-spacing:.04em}td.money{font-weight:800}.badge{display:inline-flex;padding:5px 8px;border-radius:999px;font-size:10px;font-weight:900}.paid{background:#e7f7ef;color:#0f7045}.reviewing{background:#fff4dc;color:#936000}.toast{position:fixed;right:24px;bottom:24px;background:#0d2c50;color:#fff;padding:14px 16px;border-radius:13px;box-shadow:var(--shadow);opacity:0;transform:translateY(90px);transition:.25s;z-index:80}.toast.show{opacity:1;transform:translateY(0)}
 .live-panel{margin-top:18px;background:#0d1f38;color:#fff;border-radius:20px;padding:20px;box-shadow:var(--shadow);overflow:hidden;position:relative}
 .live-panel:after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;right:-90px;top:-100px;background:#ffffff0b}
 .live-head{display:flex;justify-content:space-between;align-items:center;gap:16px;position:relative;z-index:2}
@@ -40,21 +41,32 @@ html = html.replace(
 .activity-row:last-child{border-bottom:0}.activity-row.on{opacity:1}.activity-row .tick{width:29px;height:29px;border-radius:9px;background:#edf3fb;color:var(--blue);display:grid;place-items:center;font-weight:900;flex:0 0 auto}.activity-row.done .tick{background:#e6f7ee;color:var(--green)}
 .activity-row b{font-size:13px}.activity-row span{display:block;color:var(--muted);font-size:11px;margin-top:3px}
 .demo-progress{height:10px;border-radius:99px;background:#e4ebf3;overflow:hidden;margin-top:15px}.demo-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--green));transition:.55s}
-@media(max-width:900px){.automation-grid{grid-template-columns:1fr}.demo-status{grid-template-columns:repeat(2,1fr)}}"""
-)
+@media(max-width:900px){.automation-grid{grid-template-columns:1fr}.demo-status{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1050px){.grid3{grid-template-columns:1fr}.flow{grid-template-columns:repeat(2,1fr)}.upload-layout,.review{grid-template-columns:1fr}}@media(max-width:760px){.layout{grid-template-columns:1fr}.sidebar{padding:15px;height:auto}.nav{grid-template-columns:repeat(4,1fr)}.nav button{text-align:center;font-size:11px}.side-note{display:none}.main{padding:22px 15px 50px}.topbar{align-items:flex-start}.hero h2{font-size:26px}.flow{grid-template-columns:1fr}.form{grid-template-columns:1fr}.field.full{grid-column:auto}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">✓</div><div><b>Controle de Pagamentos</b><small>Protótipo da primeira versão</small></div></div>
+  <nav class="nav">
+    <button class="active" data-view="inicio">Visão geral</button>
+    <button data-view="enviar">Enviar comprovante</button>
+    <button data-view="revisar">Conferir dados</button>
+    <button data-view="registros">Compras realizadas</button>
+  </nav>
+  <div class="side-note"><b>Escopo desta versão</b><br>O sistema registra apenas na aba <b>COMPRAS REALIZADAS</b>. As outras abas da planilha não são modificadas.</div>
+</aside>
+<main class="main">
+<header class="topbar"><div><h1 id="title">Visão geral</h1><p id="subtitle">Veja como o comprovante será transformado em um lançamento organizado.</p></div><span class="online">Demonstração disponível</span></header>
 
-html = html.replace(
-'<div class="actions"><button class="btn light" onclick="go(\'enviar\')">Experimentar o fluxo</button><button class="btn soft" onclick="document.getElementById(\'como\').scrollIntoView()">Ver como funciona</button></div></div>',
-'''<div class="actions"><button class="btn light" onclick="startAutomationDemo()">▶ Ver automação funcionando</button><button class="btn soft" onclick="go('enviar')">Testar manualmente</button><button class="btn soft" onclick="document.getElementById('como').scrollIntoView()">Ver como funciona</button></div></div>'''
-)
-
-insert_after = '''  <div class="grid grid3" style="margin-top:18px">
+<section class="screen active" id="inicio">
+  <div class="hero"><h2>Comprovantes recebidos pelo WhatsApp, organizados na planilha de pagamentos.</h2><p>O sistema identifica os dados do pagamento, apresenta uma tela para conferência e, somente após a confirmação da equipe, cria uma nova linha na aba “COMPRAS REALIZADAS”.</p><div class="actions"><button class="btn light" onclick="startAutomationDemo()">▶ Ver automação funcionando</button><button class="btn soft" onclick="go('enviar')">Testar manualmente</button><button class="btn soft" onclick="document.getElementById('como').scrollIntoView()">Ver como funciona</button></div></div>
+  <div class="grid grid3" style="margin-top:18px">
     <div class="card metric"><div><h3>Registro seguro</h3><strong>1 aba</strong><p>Somente “COMPRAS REALIZADAS” recebe novos dados.</p></div><div class="icon">▦</div></div>
     <div class="card metric"><div><h3>Revisão antes de salvar</h3><strong>100%</strong><p>Nenhum lançamento entra sem confirmação humana.</p></div><div class="icon">✓</div></div>
     <div class="card metric"><div><h3>Campos organizados</h3><strong>14</strong><p>Estrutura alinhada à planilha atual do cliente.</p></div><div class="icon">≡</div></div>
-  </div>'''
-
-live_block = insert_after + '''
+  </div>
   <div class="live-panel">
     <div class="live-head">
       <div><h3>Central da automação</h3><p>Uma simulação visual do que acontece enquanto a equipe continua trabalhando.</p></div>
@@ -81,11 +93,56 @@ live_block = insert_after + '''
       </div>
     </div>
     <div class="auto-actions"><button class="btn light" onclick="runInlineAutomation()">Simular novamente</button><button class="btn green" onclick="startAutomationDemo()">Abrir demonstração completa</button></div>
-  </div>'''
+  </div>
+  <div class="card" id="como" style="margin-top:18px"><h3 style="margin-top:0">Como funcionará</h3><div class="flow">
+    <div class="step"><div class="num">1</div><b>Envio pelo WhatsApp</b><span>A equipe recebe a foto ou o PDF do comprovante.</span></div>
+    <div class="step"><div class="num">2</div><b>Leitura das informações</b><span>Valor, data, forma de pagamento e fornecedor são identificados.</span></div>
+    <div class="step"><div class="num">3</div><b>Complemento dos dados</b><span>A equipe informa etapa, código, tipologia e descrição quando necessário.</span></div>
+    <div class="step"><div class="num">4</div><b>Conferência humana</b><span>Todos os campos são revisados antes do registro.</span></div>
+    <div class="step"><div class="num">5</div><b>Novo lançamento</b><span>Uma linha é criada apenas em “COMPRAS REALIZADAS”.</span></div>
+  </div><div class="notice"><b>Proteção da planilha:</b> as abas de etapas, pedidos e orçamentos permanecem intactas nesta primeira versão.</div></div>
+</section>
 
-html = html.replace(insert_after, live_block)
+<section class="screen" id="enviar">
+<div class="upload-layout">
+  <div class="card"><h3 style="margin-top:0">Simular recebimento do comprovante</h3><p>Selecione uma imagem ou PDF. O protótipo exibirá um exemplo de leitura para o cliente experimentar.</p><div class="drop" id="drop"><div><div class="big">📄</div><h3>Arraste o comprovante aqui</h3><p>Também é possível selecionar um arquivo no computador.</p><input type="file" id="fileInput" accept="image/*,.pdf" hidden><button class="btn primary" onclick="fileInput.click()">Selecionar arquivo</button><div class="file" id="fileName"></div></div></div><div class="process" id="process"><b id="processText">Preparando...</b><div class="bar"><span id="progress"></span></div></div></div>
+  <div class="card"><h3 style="margin-top:0">O que será verificado</h3><div class="checklist">
+    <div class="check"><i>1</i><div><b>Comprovante válido</b><small>Confirma se a imagem parece ser um pagamento.</small></div></div>
+    <div class="check"><i>2</i><div><b>Dados visíveis</b><small>Valor, data, forma e recebedor.</small></div></div>
+    <div class="check"><i>3</i><div><b>Possível repetição</b><small>Ajuda a identificar o mesmo comprovante enviado novamente.</small></div></div>
+    <div class="check"><i>4</i><div><b>Informações da compra</b><small>Etapa, código, tipologia, descrição e fornecedor.</small></div></div>
+    <div class="check"><i>5</i><div><b>Confirmação da equipe</b><small>O registro só é criado após a conferência.</small></div></div>
+  </div></div>
+</div>
+</section>
 
-overlay = '''
+<section class="screen" id="revisar">
+<div class="review">
+  <div class="card"><h3 style="margin-top:0">Comprovante recebido</h3><p>Exemplo ilustrativo do documento enviado.</p><div class="receipt-box"><div class="receipt"><h4>COMPROVANTE PIX</h4><div class="amount">R$ 2.250,00</div><div class="rline"><span>Data</span><b>12/11/2025</b></div><div class="rline"><span>Pagador</span><b>Cliente Exemplo</b></div><div class="rline"><span>Recebedor</span><b>BIMais Soluções</b></div><div class="rline"><span>Forma</span><b>Pix</b></div><div class="rline"><span>Identificação</span><b>E123456789</b></div></div></div></div>
+  <div class="card"><h3 style="margin-top:0">Conferir antes de registrar</h3><div class="locked"><b>Destino do lançamento:</b> aba “COMPRAS REALIZADAS”. Nenhuma outra aba será alterada.</div><div class="review-banner"><b>Atenção:</b> etapa, código, tipologia e descrição devem ser confirmados pela equipe.</div>
+  <div class="form">
+    <div class="field"><label>ETAPA</label><select id="etapa"><option>1</option><option>2</option><option>3</option><option>DIVERSAS</option></select></div>
+    <div class="field"><label>STATUS</label><select id="status"><option selected>PAGO</option><option>PENDENTE</option><option>EM CONFERÊNCIA</option></select></div>
+    <div class="field"><label>FORMA DE PAGAMENTO</label><select id="forma"><option selected>PIX</option><option>DEPÓSITO</option><option>BOLETO</option><option>CARTÃO</option></select></div>
+    <div class="field"><label>DATA DE SOLICITAÇÃO</label><input id="solicitacao" value="12/11/2025"></div>
+    <div class="field"><label>DATA DO PAGAMENTO</label><input id="pagamento" value="12/11/2025"></div>
+    <div class="field"><label>CÓDIGO</label><input id="codigo" placeholder="Ex.: 001"></div>
+    <div class="field"><label>TIPOLOGIA</label><select id="tipologia"><option selected>OUTROS</option><option>MATERIAL</option><option>SERVIÇO</option></select></div>
+    <div class="field"><label>FORNECEDOR</label><input id="fornecedor" value="BIMais Soluções"></div>
+    <div class="field full"><label>DESCRIÇÃO</label><input id="descricao" value="Orçamento analítico (50%)"></div>
+    <div class="field"><label>VALOR (R$)</label><input id="valor" value="R$ 2.250,00"></div>
+    <div class="field"><label>MAPA DE PREÇOS E COTAÇÕES</label><input id="mapa" placeholder="Link opcional"></div>
+    <div class="field"><label>NOTAS FISCAIS</label><input id="nota" placeholder="Link opcional"></div>
+    <div class="field full"><label>OBSERVAÇÕES</label><textarea id="obs" rows="3" placeholder="Observações adicionais"></textarea></div>
+  </div><div class="actions" style="justify-content:flex-end"><button class="btn warn" onclick="toast('Lançamento separado para revisão.')">Salvar para revisar depois</button><button class="btn green" onclick="confirmar()">Confirmar e registrar</button></div></div>
+</div>
+</section>
+
+<section class="screen" id="registros">
+<div class="card"><div style="display:flex;justify-content:space-between;gap:15px;align-items:center;flex-wrap:wrap"><div><h3 style="margin:0">Aba “COMPRAS REALIZADAS”</h3><p>Prévia dos lançamentos organizados no mesmo formato da planilha atual.</p></div><button class="btn primary" onclick="go('enviar')">Novo comprovante</button></div>
+<div class="tablewrap"><table><thead><tr><th>Etapa</th><th>Status</th><th>Forma de pagamento</th><th>Data solicitação</th><th>Data pagamento</th><th>Código</th><th>Tipologia</th><th>Descrição</th><th>Fornecedor</th><th>Valor (R$)</th><th>Mapa de preços</th><th>Notas fiscais</th><th>Observações</th></tr></thead><tbody id="rows"><tr><td>2</td><td><span class="badge paid">PAGO</span></td><td>PIX</td><td>03/12/2025</td><td>04/12/2025</td><td>001</td><td>MATERIAL</td><td>Telhas metálicas (tapume)</td><td>IPAB</td><td class="money">R$ 9.975,00</td><td>—</td><td>—</td><td>—</td></tr><tr><td>1</td><td><span class="badge paid">PAGO</span></td><td>PIX</td><td>24/11/2025</td><td>24/11/2025</td><td>—</td><td>OUTROS</td><td>ART EXECUÇÃO</td><td>BIMais</td><td class="money">R$ 271,47</td><td>—</td><td>—</td><td>—</td></tr></tbody></table></div></div>
+</section>
+</main></div>
 <div class="automation-overlay" id="automationOverlay">
   <div class="automation-modal">
     <div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start">
@@ -113,14 +170,15 @@ overlay = '''
     </div>
   </div>
 </div>
-'''
-
-html = html.replace('</main></div><div class="toast" id="toast"></div>', '</main></div>' + overlay + '<div class="toast" id="toast"></div>')
-
-old_script_end = '''function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.tt);window.tt=setTimeout(()=>t.classList.remove('show'),2800)}
-</script>'''
-
-new_script_end = '''function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.tt);window.tt=setTimeout(()=>t.classList.remove('show'),2800)}
+<div class="toast" id="toast"></div>
+<script>
+const meta={inicio:['Visão geral','Veja como o comprovante será transformado em um lançamento organizado.'],enviar:['Enviar comprovante','Simule o recebimento de uma foto ou PDF pelo WhatsApp.'],revisar:['Conferir dados','Revise todos os campos antes de criar o lançamento.'],registros:['Compras realizadas','Visualize os registros adicionados à aba principal.']};
+function go(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelector(`[data-view="${id}"]`).classList.add('active');title.textContent=meta[id][0];subtitle.textContent=meta[id][1];scrollTo({top:0,behavior:'smooth'})}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>go(b.dataset.view));
+const drop=document.getElementById('drop'),fileInput=document.getElementById('fileInput');['dragenter','dragover'].forEach(e=>drop.addEventListener(e,x=>{x.preventDefault();drop.classList.add('drag')}));['dragleave','drop'].forEach(e=>drop.addEventListener(e,x=>{x.preventDefault();drop.classList.remove('drag')}));drop.addEventListener('drop',e=>processFile(e.dataTransfer.files[0]));fileInput.onchange=()=>processFile(fileInput.files[0]);
+function processFile(file){if(!file)return;fileName.textContent='Arquivo selecionado: '+file.name;process.classList.add('show');progress.style.width='15%';processText.textContent='Recebendo o comprovante...';setTimeout(()=>{progress.style.width='45%';processText.textContent='Lendo as informações...'},650);setTimeout(()=>{progress.style.width='75%';processText.textContent='Organizando os campos da planilha...'},1350);setTimeout(()=>{progress.style.width='100%';processText.textContent='Pronto para conferência.'},2050);setTimeout(()=>go('revisar'),2600)}
+function confirmar(){const vals=[etapa.value,status.value,forma.value,solicitacao.value,pagamento.value,codigo.value||'—',tipologia.value,descricao.value,fornecedor.value,valor.value,mapa.value||'—',nota.value||'—',obs.value||'—'];const tr=document.createElement('tr');vals.forEach((v,i)=>{const td=document.createElement('td');if(i===1)td.innerHTML='<span class="badge paid">'+v+'</span>';else td.textContent=v;if(i===9)td.className='money';tr.appendChild(td)});rows.prepend(tr);toast('Pagamento registrado em “COMPRAS REALIZADAS”.');setTimeout(()=>go('registros'),600)}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.tt);window.tt=setTimeout(()=>t.classList.remove('show'),2800)}
 
 let inlineTimers=[], fullTimers=[];
 function clearTimers(list){list.forEach(clearTimeout);list.length=0}
@@ -170,10 +228,5 @@ function runFullAutomation(){
   });
 }
 window.addEventListener('load',()=>setTimeout(runInlineAutomation,700));
-</script>'''
-
-html = html.replace(old_script_end, new_script_end)
-
-out = Path("/mnt/data/prototipo_compras_realizadas_automacao.html")
-out.write_text(html, encoding="utf-8")
-print(out)
+</script>
+</body></html>
