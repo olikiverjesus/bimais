@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Resultado — Comprovantes lançados na planilha</title>
+<style>
+  :root{
+    --text:#10213a; --muted:#657792; --line:#dbe4ef;
+    --blue:#1769e8; --blue-soft:#eef4ff; --blue-ink:#16538e;
+    --green:#1e9d63; --green-soft:#e9f8f1; --green-ink:#166f47;
+    --amber:#b07d00; --amber-soft:#fff5d6; --amber-line:#f0e2a6;
+    --wa:#008069; --gs-grid:#e2e5e9; --gs-head:#f8f9fa;
+    --shadow:0 20px 55px rgba(3,18,37,.24);
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;color:#fff;font-family:var(--font);
+    background:radial-gradient(circle at 8% 4%,rgba(23,105,232,.20),transparent 26%),radial-gradient(circle at 94% 14%,rgba(30,157,99,.16),transparent 26%),linear-gradient(180deg,#08182c,#0c2340 60%,#0a1c34);}
+  button{font:inherit;cursor:pointer}
+  .page{max-width:1500px;margin:auto;padding:24px}
+
+  .topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+  .brand{display:flex;align-items:center;gap:14px}
+  .mark{width:50px;height:50px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,var(--blue),var(--green));font-weight:900;font-size:22px;box-shadow:0 14px 30px rgba(23,105,232,.4)}
+  .brand h1{font-size:19px;margin:0;letter-spacing:-.2px}.brand p{font-size:12.5px;color:#aebfd3;margin:4px 0 0}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .chip{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:9px 13px;background:rgba(255,255,255,.09);font-size:12px;font-weight:800;color:#dbe7f5}
+  .chip.file:before{content:"📄"}
+  .btn{border:0;border-radius:13px;padding:12px 17px;font-weight:800;display:inline-flex;align-items:center;gap:8px;background:var(--blue);color:#fff;box-shadow:0 12px 30px rgba(23,105,232,.34);transition:transform .15s}
+  .btn:hover{transform:translateY(-1px)}
+
+  .hero{background:linear-gradient(135deg,#0e2a4e,#125da0 56%,#137d59);padding:26px 28px;border-radius:24px;box-shadow:var(--shadow);position:relative;overflow:hidden;margin-bottom:16px}
+  .hero:after{content:"";position:absolute;width:280px;height:280px;border-radius:50%;right:-90px;top:-120px;background:rgba(255,255,255,.08)}
+  .hero h2{margin:0 0 8px;font-size:26px;line-height:1.18;max-width:900px;letter-spacing:-.4px}
+  .hero p{margin:0;color:#e6f1ff;font-size:14.5px;line-height:1.6;max-width:900px}
+  .hero b{color:#fff}
+
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
+  .kpi{background:#fff;color:var(--text);border-radius:18px;padding:15px 16px;box-shadow:var(--shadow)}
+  .kpi small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;font-weight:900;letter-spacing:.4px}
+  .kpi strong{display:block;margin-top:6px;font-size:23px;letter-spacing:-.5px;color:#12294a}
+  .kpi.good strong{color:var(--green-ink)}
+  .kpi .foot{display:block;margin-top:3px;font-size:10.5px;color:#8494a8;font-weight:700}
+
+  .grid{display:grid;grid-template-columns:minmax(300px,.78fr) minmax(420px,1.35fr);gap:14px;align-items:start}
+  .card{background:#fff;color:var(--text);border-radius:22px;padding:18px;box-shadow:var(--shadow)}
+  .card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:14px}
+  .card-head h3{margin:0;font-size:16px;letter-spacing:-.2px}
+  .card-head .hint{margin:4px 0 0;color:var(--muted);font-size:11.5px}
+  .tag{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;font-size:10px;font-weight:900;white-space:nowrap}
+  .tag.wa{background:#e7f5ef;color:#0b7a5e}
+  .tag.gs{background:var(--green-soft);color:var(--green-ink)}
+
+  /* comprovantes (whatsapp) */
+  .receipts{display:grid;gap:11px}
+  .rc{border:1px solid #e6ecf3;border-radius:15px;padding:12px;background:#fbfcfe;opacity:0;transform:translateY(10px);transition:.4s}
+  .rc.show{opacity:1;transform:none}
+  .rc-top{display:flex;align-items:center;gap:10px}
+  .rc-ic{width:40px;height:40px;border-radius:11px;background:#eaf7f1;color:#0b7a5e;display:grid;place-items:center;font-size:18px;flex:0 0 auto}
+  .rc-name{flex:1;min-width:0}
+  .rc-name b{display:block;font-size:13px;color:#16233c}
+  .rc-name small{display:block;color:var(--muted);font-size:11px;margin-top:1px}
+  .rc-val{text-align:right}
+  .rc-val b{display:block;font-size:15px;color:#12294a}
+  .rc-val small{display:block;font-size:10px;color:#8494a8}
+  .rc-pipe{display:flex;align-items:center;gap:6px;margin-top:11px;flex-wrap:wrap}
+  .st{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;padding:4px 9px;border-radius:999px;background:#eef3f8;color:#5c6f88}
+  .st.ok{background:var(--green-soft);color:var(--green-ink)}
+  .st.human{background:var(--amber-soft);color:var(--amber)}
+  .st .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+  .rc-meta{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px dashed #e4ebf3}
+  .conf{font-size:10.5px;color:var(--muted);font-weight:800}
+  .conf b{color:var(--green-ink)}
+  .rc-codes{display:flex;gap:6px}
+  .badge{font-size:9.5px;font-weight:900;padding:3px 8px;border-radius:8px}
+  .badge.stage{background:var(--blue-soft);color:var(--blue-ink)}
+  .badge.code{background:var(--amber-soft);color:var(--amber)}
+
+  /* planilha */
+  .gs{border:1px solid #d6dbe0;border-radius:12px;overflow:hidden}
+  .gs-title{background:#fff;border-bottom:1px solid #eef1f4;padding:9px 11px}
+  .gs-title b{display:block;font-size:11px;color:#26374f}.gs-title small{display:block;font-size:10px;color:#7a869a;margin-top:1px}
+  .gs-bar{background:#fff;border-bottom:1px solid #e6e9ee;padding:8px 11px;display:flex;align-items:center;gap:9px}
+  .gs-tab{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:800;color:#188038}
+  .gs-tab:before{content:"";width:15px;height:15px;border-radius:3px;background:#188038;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 3h11l5 5v13H4z' fill='black'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4 3h11l5 5v13H4z' fill='black'/%3E%3C/svg%3E")}
+  .gs-sync{margin-left:auto;font-size:10px;color:#188038;font-weight:800;display:flex;align-items:center;gap:5px}
+  .gs-sync:before{content:"";width:7px;height:7px;border-radius:50%;background:#188038}
+  .gs-formula{background:#f8f9fa;border-bottom:1px solid #e6e9ee;padding:5px 10px;display:flex;align-items:center;gap:8px;font-size:11px;color:#3c4043}
+  .gs-formula .fx{font-style:italic;font-weight:700;color:#80868b}
+  .gs-formula .ref{background:#fff;border:1px solid #dadce0;border-radius:4px;padding:2px 7px;font-size:10px;color:#5f6368;min-width:32px;text-align:center}
+  .table-wrap{overflow:auto;background:#fff}
+  table{border-collapse:collapse;width:100%;min-width:1120px;font-size:11px}
+  tbody{counter-reset:rn}
+  th,td{border-right:1px solid var(--gs-grid);border-bottom:1px solid var(--gs-grid);padding:7px 9px;text-align:left;white-space:nowrap;color:#3c4043}
+  thead th{background:var(--gs-head);color:#5f6368;font-weight:700;text-align:center;font-size:10px}
+  .corner{width:30px;background:#f1f3f4}
+  .rn{width:30px;background:#f8f9fa;color:#80868b;font-weight:600;text-align:center;font-size:10px}
+  tbody tr{counter-increment:rn}.rn:before{content:counter(rn)}
+  #hdr td:not(.rn){background:#f3f6fb;font-weight:800;color:#26374f;text-transform:uppercase;font-size:8.5px;white-space:normal;min-width:70px;vertical-align:bottom}
+  td.desc{white-space:normal;min-width:150px;max-width:230px}
+  .new td:not(.rn){background:linear-gradient(90deg,#e7f4ff,#eafaf1)}
+  .new .rn{background:#e9f6ef}
+  .new.flash td:not(.rn){animation:flash 1.2s ease}
+  @keyframes flash{0%{background:#fff4cf}60%{background:#e9f9ef}100%{background:linear-gradient(90deg,#e7f4ff,#eafaf1)}}
+  .chipcell{display:inline-flex;align-items:center;padding:2px 7px;border-radius:999px;font-size:9.5px;font-weight:800}
+  .c-pago{background:#e6f4ea;color:#137333}.c-cod{background:#fef7e0;color:#8a6d00}
+  .acc{font-weight:800;color:#12294a}
+  .link{color:#1a73e8;text-decoration:underline;font-size:10px}
+
+  /* de -> para */
+  .mapping{margin-top:14px}
+  .map-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+  .map-col h4{margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+  .map-col.auto h4{color:var(--blue-ink)}.map-col.human h4{color:var(--amber)}
+  .map-item{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;border-radius:10px;background:#f8fafc;border:1px solid #e7edf4;font-size:11px;margin-bottom:6px}
+  .map-item span{color:var(--muted)}.map-item b{color:#16233c}
+  .map-col.auto .map-item{background:var(--blue-soft);border-color:#d9e6fb}
+  .map-col.human .map-item{background:var(--amber-soft);border-color:var(--amber-line)}
+  .map-conf{font-size:9px;color:var(--green-ink);font-weight:800;margin-left:6px}
+
+  .assurance{margin-top:16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:16px 18px;display:flex;gap:14px;align-items:center}
+  .assurance .ic{width:42px;height:42px;border-radius:13px;background:rgba(46,213,141,.15);color:#7ff0bb;display:grid;place-items:center;font-size:20px;flex:0 0 auto}
+  .assurance b{display:block;font-size:14px}.assurance span{display:block;color:#b9c7d7;font-size:12.5px;margin-top:3px}
+  .legend{margin-top:14px;text-align:center;color:#9fb1c6;font-size:11px}
+
+  @media(max-width:1080px){
+    .kpis{grid-template-columns:repeat(3,1fr)}
+    .grid{grid-template-columns:1fr}
+  }
+  @media(max-width:640px){
+    .page{padding:14px}.hero h2{font-size:21px}.hero{padding:20px}
+    .kpis{grid-template-columns:1fr 1fr}
+    .map-grid{grid-template-columns:1fr}
+    .topbar{flex-direction:column;align-items:stretch}.actions .btn{flex:1;justify-content:center}
+    .kpi strong{font-size:20px}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark">✓</div>
+      <div><h1>Controle de Pagamentos — IA</h1><p>Resultado real na sua planilha</p></div>
+    </div>
+    <div class="actions">
+      <span class="chip file">CONTROLE DE PAGAMENTOS - IA</span>
+      <button class="btn" onclick="replay()">▶&nbsp; Reproduzir lançamento</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h2>3 comprovantes do WhatsApp → 3 lançamentos conferidos na aba COMPRAS REALIZADAS.</h2>
+    <p>Cada comprovante foi lido automaticamente (valor, data, forma, fornecedor, descrição), <b>Etapa</b> e <b>Código</b> foram confirmados pelo time, e o <b>Total acumulado</b> foi recalculado — de R$ 9.975,00 para <b>R$ 34.976,00</b>. Estes são registros reais da sua planilha.</p>
+  </section>
+
+  <section class="kpis">
+    <div class="kpi"><small>Comprovantes processados</small><strong data-count="3">0</strong><span class="foot">nesta rodada</span></div>
+    <div class="kpi good"><small>Valor lançado</small><strong data-money="34976">R$ 0,00</strong><span class="foot">soma dos 3</span></div>
+    <div class="kpi"><small>Conferidos pelo time</small><strong data-count="3">0</strong><span class="foot">de 3 · 100%</span></div>
+    <div class="kpi good"><small>Erros de lançamento</small><strong data-count="0">0</strong><span class="foot">nada gravado sem conferência</span></div>
+    <div class="kpi"><small>Tempo economizado</small><strong>~12 min</strong><span class="foot">vs. lançamento manual</span></div>
+  </section>
+
+  <section class="grid">
+    <!-- comprovantes -->
+    <div class="card">
+      <div class="card-head">
+        <div><h3>Comprovantes recebidos</h3><p class="hint">Chegaram pelo WhatsApp da obra.</p></div>
+        <span class="tag wa">WhatsApp</span>
+      </div>
+      <div class="receipts" id="receipts">
+        <div class="rc" data-i="0">
+          <div class="rc-top">
+            <div class="rc-ic">🧾</div>
+            <div class="rc-name"><b>IPAB</b><small>Telhas metálicas (tapume)</small></div>
+            <div class="rc-val"><b>R$ 9.975,00</b><small>Pix · 04/12/2025</small></div>
+          </div>
+          <div class="rc-pipe">
+            <span class="st ok"><span class="dot"></span>Lido</span>
+            <span class="st human"><span class="dot"></span>Conferido</span>
+            <span class="st ok"><span class="dot"></span>Lançado</span>
+          </div>
+          <div class="rc-meta">
+            <span class="conf">Leitura <b>98%</b></span>
+            <span class="rc-codes"><span class="badge stage">ETAPA 2</span><span class="badge code">CÓD. 001</span></span>
+          </div>
+        </div>
+
+        <div class="rc" data-i="1">
+          <div class="rc-top">
+            <div class="rc-ic">🧾</div>
+            <div class="rc-name"><b>MAD. PICA-PAU</b><small>Barrotes, sarrafos, madeirite…</small></div>
+            <div class="rc-val"><b>R$ 24.969,00</b><small>Pix · 04/12/2025</small></div>
+          </div>
+          <div class="rc-pipe">
+            <span class="st ok"><span class="dot"></span>Lido</span>
+            <span class="st human"><span class="dot"></span>Conferido</span>
+            <span class="st ok"><span class="dot"></span>Lançado</span>
+          </div>
+          <div class="rc-meta">
+            <span class="conf">Leitura <b>95%</b></span>
+            <span class="rc-codes"><span class="badge stage">ETAPA 2</span><span class="badge code">CÓD. 005</span></span>
+          </div>
+        </div>
+
+        <div class="rc" data-i="2">
+          <div class="rc-top">
+            <div class="rc-ic">🧾</div>
+            <div class="rc-name"><b>UAU FERRAMENTAS</b><small>Prego 15x15</small></div>
+            <div class="rc-val"><b>R$ 32,00</b><small>Depósito · 04/12/2025</small></div>
+          </div>
+          <div class="rc-pipe">
+            <span class="st ok"><span class="dot"></span>Lido</span>
+            <span class="st human"><span class="dot"></span>Conferido</span>
+            <span class="st ok"><span class="dot"></span>Lançado</span>
+          </div>
+          <div class="rc-meta">
+            <span class="conf">Leitura <b>99%</b></span>
+            <span class="rc-codes"><span class="badge stage">ETAPA 2</span><span class="badge code">CÓD. 006</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- planilha -->
+    <div class="card">
+      <div class="card-head">
+        <div><h3>COMPRAS REALIZADAS</h3><p class="hint">Sua planilha — as 3 linhas destacadas entraram após a conferência.</p></div>
+        <span class="tag gs">Planilha real</span>
+      </div>
+      <div class="gs">
+        <div class="gs-title"><b>PLANILHA DE CONTROLE DE PAGAMENTOS</b><small>CASA E|L — LOTE 105 — COND. TERRAZZUL</small></div>
+        <div class="gs-bar"><span class="gs-tab">COMPRAS REALIZADAS</span><span class="gs-sync">Sincronizado</span></div>
+        <div class="gs-formula"><span class="fx">fx</span><span class="ref">K10</span><span>=J10+K9  →  R$ 34.976,00</span></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th class="corner"></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>G</th><th>H</th><th>I</th><th>J</th><th>K</th><th>L</th><th>M</th><th>N</th></tr></thead>
+            <tbody id="body">
+              <tr id="hdr">
+                <td class="rn"></td>
+                <td>Etapa</td><td>Status</td><td>Forma</td><td>Data solic.</td><td>Data pgto.</td><td>Código</td><td>Tipologia</td><td>Descrição</td><td>Fornecedor</td><td>Valor (R$)</td><td>Total acum.</td><td>Mapa preços</td><td>Notas fiscais</td><td>Obs.</td>
+              </tr>
+              <tr class="new" data-i="0">
+                <td class="rn"></td>
+                <td>2</td><td><span class="chipcell c-pago">PAGO</span></td><td>PIX</td><td>03/12/2025</td><td>04/12/2025</td><td><span class="chipcell c-cod">001</span></td><td>MATERIAL</td><td class="desc">Telhas metálicas (tapume)</td><td>IPAB</td><td>R$ 9.975,00</td><td class="acc">R$ 9.975,00</td><td>—</td><td><a class="link">NF</a></td><td>WhatsApp</td>
+              </tr>
+              <tr class="new" data-i="1">
+                <td class="rn"></td>
+                <td>2</td><td><span class="chipcell c-pago">PAGO</span></td><td>PIX</td><td>04/12/2025</td><td>04/12/2025</td><td><span class="chipcell c-cod">005</span></td><td>MATERIAL</td><td class="desc">Barrotes, sarrafos, madeirite e peça maçaranduba</td><td>MAD. PICA-PAU</td><td>R$ 24.969,00</td><td class="acc">R$ 34.944,00</td><td>—</td><td><a class="link">NF</a></td><td>WhatsApp</td>
+              </tr>
+              <tr class="new" data-i="2">
+                <td class="rn"></td>
+                <td>2</td><td><span class="chipcell c-pago">PAGO</span></td><td>DEPÓSITO</td><td>04/12/2025</td><td>04/12/2025</td><td><span class="chipcell c-cod">006</span></td><td>MATERIAL</td><td class="desc">Prego 15x15</td><td>UAU FERRAMENTAS</td><td>R$ 32,00</td><td class="acc">R$ 34.976,00</td><td>—</td><td>—</td><td>WhatsApp</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- de -> para -->
+      <div class="mapping">
+        <div class="card-head" style="margin:0">
+          <div><h3 style="font-size:14px">Como cada campo foi preenchido</h3><p class="hint">Exemplo: comprovante da IPAB.</p></div>
+        </div>
+        <div class="map-grid">
+          <div class="map-col auto">
+            <h4>Lido do comprovante (automático)</h4>
+            <div class="map-item"><span>Valor</span><b>R$ 9.975,00 <span class="map-conf">98%</span></b></div>
+            <div class="map-item"><span>Data de pagamento</span><b>04/12/2025</b></div>
+            <div class="map-item"><span>Forma</span><b>Pix</b></div>
+            <div class="map-item"><span>Fornecedor</span><b>IPAB</b></div>
+            <div class="map-item"><span>Descrição</span><b>Telhas metálicas</b></div>
+          </div>
+          <div class="map-col human">
+            <h4>Confirmado por você</h4>
+            <div class="map-item"><span>Etapa</span><b>2</b></div>
+            <div class="map-item"><span>Código (sequencial)</span><b>001</b></div>
+            <div class="map-item"><span>Tipologia</span><b>MATERIAL</b></div>
+            <div class="map-item" style="background:#f1faf5;border-color:#d9ecdf"><span>Total acumulado (calculado)</span><b style="color:#166f47">R$ 9.975,00</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="assurance">
+    <div class="ic">🛡️</div>
+    <div>
+      <b>Nada entra sem conferência.</b>
+      <span>Etapa e Código são confirmados por uma pessoa antes de gravar na planilha. O que a IA lê fica destacado para revisão — nenhum lançamento é automático sem o “Confirmar”.</span>
+    </div>
+  </section>
+
+  <div class="legend">Demonstração com dados reais da planilha “CONTROLE DE PAGAMENTOS - IA” (aba COMPRAS REALIZADAS). Nenhuma mensagem é enviada e nenhum dado externo é alterado.</div>
+</div>
+
+<script>
+function animateNumbers(){
+  document.querySelectorAll("[data-count]").forEach(el=>{
+    const end=+el.dataset.count;let n=0;const step=Math.max(1,Math.round(end/18));
+    const t=setInterval(()=>{n+=step;if(n>=end){n=end;clearInterval(t)}el.textContent=n},40);
+  });
+  document.querySelectorAll("[data-money]").forEach(el=>{
+    const end=+el.dataset.money;let n=0;const step=Math.round(end/22);
+    const fmt=v=>"R$ "+v.toLocaleString("pt-BR")+",00";
+    const t=setInterval(()=>{n+=step;if(n>=end){n=end;clearInterval(t)}el.textContent=fmt(n)},40);
+  });
+}
+function reveal(){
+  document.querySelectorAll(".rc").forEach((el,i)=>setTimeout(()=>el.classList.add("show"),200+i*260));
+  document.querySelectorAll("tr.new").forEach((el,i)=>{
+    el.classList.remove("flash");void el.offsetWidth;
+    setTimeout(()=>el.classList.add("flash"),500+i*320);
+  });
+}
+function replay(){
+  document.querySelectorAll(".rc").forEach(el=>el.classList.remove("show"));
+  document.querySelectorAll("[data-count]").forEach(el=>el.textContent="0");
+  document.querySelectorAll("[data-money]").forEach(el=>el.textContent="R$ 0,00");
+  setTimeout(()=>{animateNumbers();reveal()},120);
+}
+replay();
+</script>
+</body>
+</html>
