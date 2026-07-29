@@ -1,232 +1,823 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Controle de Pagamentos — Protótipo</title>
-<style>
-:root{--navy:#0c2340;--blue:#2364d2;--green:#14945f;--bg:#f4f7fb;--card:#fff;--text:#17243a;--muted:#6d7b91;--line:#dfe7f0;--warn:#b87500;--shadow:0 18px 50px rgba(24,43,74,.10)}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:radial-gradient(circle at 5% 0%,#eaf2ff,transparent 28%),var(--bg);color:var(--text)}button,input,select,textarea{font:inherit}.layout{display:grid;grid-template-columns:252px 1fr;min-height:100vh}.sidebar{background:var(--navy);color:#fff;padding:24px 18px;display:flex;flex-direction:column;gap:22px}.brand{display:flex;gap:12px;align-items:center;padding:0 6px 20px;border-bottom:1px solid #ffffff1c}.logo{width:43px;height:43px;border-radius:14px;background:linear-gradient(135deg,#347df0,#18a36c);display:grid;place-items:center;font-weight:900}.brand b{display:block}.brand small{color:#afbdd0}.nav{display:grid;gap:7px}.nav button{border:0;background:transparent;color:#b7c4d6;text-align:left;padding:12px 13px;border-radius:12px;cursor:pointer;font-weight:650}.nav button.active,.nav button:hover{color:white;background:#ffffff13}.side-note{margin-top:auto;padding:15px;border-radius:15px;background:#ffffff0d;border:1px solid #ffffff16;font-size:12px;line-height:1.5;color:#c3cede}.main{padding:28px 34px 60px}.topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:22px}.topbar h1{font-size:27px;margin:0 0 5px}.topbar p{margin:0;color:var(--muted)}.online{padding:9px 12px;border-radius:999px;background:#e8f8f0;color:#0f7548;font-size:12px;font-weight:800}.online:before{content:"";display:inline-block;width:8px;height:8px;background:var(--green);border-radius:50%;margin-right:7px}.screen{display:none}.screen.active{display:block}.hero{background:linear-gradient(135deg,#174fa9,#2072cc 52%,#168d64);border-radius:25px;color:#fff;padding:31px;box-shadow:var(--shadow);overflow:hidden;position:relative}.hero:after{content:"";position:absolute;width:280px;height:280px;border-radius:50%;right:-100px;top:-120px;background:#ffffff12}.hero h2{margin:0 0 11px;font-size:32px;max-width:760px}.hero p{max-width:770px;color:#eaf2ff;line-height:1.6}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.btn{border:0;border-radius:12px;padding:12px 16px;font-weight:800;cursor:pointer}.btn.primary{background:var(--blue);color:#fff}.btn.light{background:#fff;color:#164e9f}.btn.soft{background:#edf3fb;color:#29415f}.btn.green{background:var(--green);color:white}.btn.warn{background:#fff4dc;color:#986000}.grid{display:grid;gap:18px}.grid3{grid-template-columns:repeat(3,1fr)}.card{background:var(--card);border:1px solid var(--line);border-radius:19px;padding:21px;box-shadow:0 9px 30px rgba(25,45,78,.06)}.metric{display:flex;justify-content:space-between;align-items:flex-start}.metric h3{font-size:14px;margin:0;color:#43516a}.metric strong{font-size:30px;display:block;margin-top:8px}.metric p,.card p{color:var(--muted);line-height:1.55}.icon{width:45px;height:45px;border-radius:14px;background:#edf4ff;color:var(--blue);display:grid;place-items:center;font-weight:900}.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.step{border:1px solid var(--line);border-radius:16px;padding:16px;background:#fff;min-height:150px}.num{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#fff;background:var(--blue);font-size:12px;font-weight:900;margin-bottom:10px}.step:nth-child(n+4) .num{background:var(--green)}.step b{display:block;font-size:14px}.step span{font-size:12px;color:var(--muted);line-height:1.45;display:block;margin-top:7px}.notice{margin-top:18px;border:1px solid #cfe6db;background:#effaf5;color:#136b45;border-radius:14px;padding:14px;font-size:13px}.upload-layout{display:grid;grid-template-columns:1.08fr .92fr;gap:20px}.drop{min-height:350px;border:2px dashed #aabed9;border-radius:18px;background:#fafdff;display:flex;align-items:center;justify-content:center;text-align:center;padding:25px}.drop.drag{border-color:var(--blue);background:#eef5ff}.drop .big{font-size:42px}.drop h3{margin:12px 0 7px}.file{color:#23538f;font-size:13px;font-weight:800;margin-top:12px}.process{display:none;margin-top:16px;border-radius:14px;background:#f7f9fc;border:1px solid var(--line);padding:15px}.process.show{display:block}.bar{height:9px;border-radius:99px;background:#e4ebf3;margin-top:10px;overflow:hidden}.bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--green));transition:.4s}.checklist{display:grid;gap:0}.check{display:flex;gap:11px;padding:13px 0;border-bottom:1px solid var(--line)}.check:last-child{border-bottom:0}.check i{font-style:normal;width:31px;height:31px;border-radius:10px;background:#eaf8f1;color:var(--green);display:grid;place-items:center;font-weight:900}.check b{font-size:13px}.check small{display:block;color:var(--muted);margin-top:4px}.review{display:grid;grid-template-columns:.82fr 1.18fr;gap:20px}.receipt-box{min-height:570px;border-radius:17px;background:#edf1f6;display:grid;place-items:center;padding:20px}.receipt{width:min(390px,100%);background:white;padding:28px;border-radius:9px;box-shadow:0 18px 45px #1e314026;font-family:ui-monospace,monospace}.receipt h4{text-align:center;margin:0 0 18px}.receipt .amount{text-align:center;font-size:25px;font-weight:900;padding:18px}.rline{display:flex;justify-content:space-between;gap:14px;padding:8px 0;border-bottom:1px dashed #d8dee8;font-size:12px}.review-banner{padding:13px;border-radius:13px;background:#fff8e7;color:#895900;border:1px solid #f0dca4;margin:15px 0;font-size:13px}.form{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}.field{display:grid;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:11px;font-weight:850;color:#4d5c73}.field input,.field select,.field textarea{border:1px solid #cbd6e3;border-radius:10px;padding:10px 11px;background:#fff;color:var(--text);width:100%}.field input:focus,.field select:focus,.field textarea:focus{outline:0;border-color:var(--blue);box-shadow:0 0 0 3px #2364d219}.locked{padding:12px 14px;border-radius:13px;background:#eef4fb;color:#35506f;font-size:12px;margin-bottom:15px}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:15px}table{border-collapse:collapse;width:100%;min-width:1240px;background:#fff}th,td{padding:13px 14px;border-bottom:1px solid var(--line);text-align:left;font-size:12px}th{background:#f7f9fc;color:#56647a;text-transform:uppercase;font-size:10px;letter-spacing:.04em}td.money{font-weight:800}.badge{display:inline-flex;padding:5px 8px;border-radius:999px;font-size:10px;font-weight:900}.paid{background:#e7f7ef;color:#0f7045}.reviewing{background:#fff4dc;color:#936000}.toast{position:fixed;right:24px;bottom:24px;background:#0d2c50;color:#fff;padding:14px 16px;border-radius:13px;box-shadow:var(--shadow);opacity:0;transform:translateY(90px);transition:.25s;z-index:80}.toast.show{opacity:1;transform:translateY(0)}
-.live-panel{margin-top:18px;background:#0d1f38;color:#fff;border-radius:20px;padding:20px;box-shadow:var(--shadow);overflow:hidden;position:relative}
-.live-panel:after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;right:-90px;top:-100px;background:#ffffff0b}
-.live-head{display:flex;justify-content:space-between;align-items:center;gap:16px;position:relative;z-index:2}
-.live-head h3{margin:0 0 5px}.live-head p{margin:0;color:#afbdd0;font-size:13px}
-.live-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 11px;border-radius:999px;background:#12365a;color:#cde2ff;font-size:11px;font-weight:900}
-.live-badge:before{content:"";width:8px;height:8px;border-radius:50%;background:#39d98a;box-shadow:0 0 0 6px #39d98a1c;animation:pulse 1.5s infinite}
-@keyframes pulse{50%{box-shadow:0 0 0 11px transparent}}
-.automation-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-top:18px;position:relative;z-index:2}
-.phone{background:#f7fafc;color:var(--text);border-radius:18px;padding:14px;min-height:280px}
-.phone-top{display:flex;align-items:center;gap:10px;padding:4px 4px 12px;border-bottom:1px solid var(--line)}
-.avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#dff5e9;color:#0c7547;font-weight:900}
-.phone-top b{display:block;font-size:13px}.phone-top small{color:var(--muted)}
-.chat{display:grid;gap:10px;padding:18px 4px}
-.bubble{max-width:86%;padding:11px 13px;border-radius:14px;background:#fff;box-shadow:0 4px 16px #1f355214;font-size:12px;line-height:1.45}
-.bubble.sent{margin-left:auto;background:#dff7e9}.bubble.filemsg{border-left:4px solid var(--green)}
-.event-log{background:#112945;border-radius:18px;padding:16px;min-height:280px}
-.event-log h4{margin:0 0 12px}.events{display:grid;gap:9px}
-.event{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:12px;background:#ffffff09;border:1px solid #ffffff0d;opacity:.42;transform:translateY(5px);transition:.35s}
-.event.active{opacity:1;transform:translateY(0);background:#ffffff12}.event.done .event-dot{background:#39d98a;color:#062b1b}
-.event-dot{width:25px;height:25px;border-radius:8px;background:#284a70;display:grid;place-items:center;flex:0 0 auto;font-size:11px;font-weight:900}
-.event b{display:block;font-size:12px}.event span{display:block;color:#b8c6d8;font-size:11px;margin-top:3px}
-.auto-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:15px;position:relative;z-index:2}
-.automation-overlay{position:fixed;inset:0;background:#071526e8;backdrop-filter:blur(8px);z-index:60;display:none;align-items:center;justify-content:center;padding:20px}
-.automation-overlay.show{display:flex}
-.automation-modal{width:min(920px,100%);background:#f5f8fc;border-radius:25px;padding:24px;box-shadow:0 30px 90px #0008}
-.automation-modal h2{margin:0}.automation-modal>p{color:var(--muted);margin:7px 0 18px}
-.demo-status{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:15px}
-.demo-stat{padding:13px;border-radius:14px;background:#fff;border:1px solid var(--line)}
-.demo-stat small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;font-weight:850}.demo-stat strong{display:block;margin-top:5px;font-size:17px}
-.activity{background:#fff;border:1px solid var(--line);border-radius:16px;padding:15px;min-height:300px}
-.activity-row{display:flex;gap:12px;padding:12px 2px;border-bottom:1px solid var(--line);opacity:.3;transition:.35s}
-.activity-row:last-child{border-bottom:0}.activity-row.on{opacity:1}.activity-row .tick{width:29px;height:29px;border-radius:9px;background:#edf3fb;color:var(--blue);display:grid;place-items:center;font-weight:900;flex:0 0 auto}.activity-row.done .tick{background:#e6f7ee;color:var(--green)}
-.activity-row b{font-size:13px}.activity-row span{display:block;color:var(--muted);font-size:11px;margin-top:3px}
-.demo-progress{height:10px;border-radius:99px;background:#e4ebf3;overflow:hidden;margin-top:15px}.demo-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--green));transition:.55s}
-@media(max-width:900px){.automation-grid{grid-template-columns:1fr}.demo-status{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:1050px){.grid3{grid-template-columns:1fr}.flow{grid-template-columns:repeat(2,1fr)}.upload-layout,.review{grid-template-columns:1fr}}@media(max-width:760px){.layout{grid-template-columns:1fr}.sidebar{padding:15px;height:auto}.nav{grid-template-columns:repeat(4,1fr)}.nav button{text-align:center;font-size:11px}.side-note{display:none}.main{padding:22px 15px 50px}.topbar{align-items:flex-start}.hero h2{font-size:26px}.flow{grid-template-columns:1fr}.form{grid-template-columns:1fr}.field.full{grid-column:auto}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demonstração Premium — Controle de Pagamentos</title>
+  <style>
+    :root{
+      --bg:#081321;
+      --bg-2:#0d1e34;
+      --panel:#ffffff;
+      --text:#11213b;
+      --muted:#6d7c93;
+      --line:#dbe4ef;
+      --blue:#1a73ff;
+      --blue-2:#0b5cd7;
+      --green:#1ea76a;
+      --green-2:#0f8553;
+      --soft-blue:#ecf4ff;
+      --soft-green:#e9f8f1;
+      --warning:#d6a200;
+      --warning-soft:#fff7d8;
+      --radius:22px;
+      --shadow:0 18px 50px rgba(8, 24, 48, .18);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(26,115,255,.16), transparent 22%),
+        radial-gradient(circle at 90% 0%, rgba(30,167,106,.14), transparent 25%),
+        linear-gradient(180deg, #091321 0%, #10243f 100%);
+      color:#fff;
+      overflow-x:hidden;
+    }
+    .blobs{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+    .blob{
+      position:absolute;border-radius:50%;filter:blur(24px);opacity:.23;
+      animation: floatBlob 16s ease-in-out infinite;
+    }
+    .blob.b1{width:320px;height:320px;background:#1569ff;left:-80px;top:40px}
+    .blob.b2{width:260px;height:260px;background:#13a86c;right:-40px;top:120px;animation-delay:-4s}
+    .blob.b3{width:220px;height:220px;background:#1d5dd6;left:45%;bottom:20px;animation-delay:-8s}
+    @keyframes floatBlob{
+      0%,100%{transform:translate(0,0) scale(1)}
+      50%{transform:translate(18px,-16px) scale(1.06)}
+    }
+
+    .page{position:relative;z-index:1;max-width:1380px;margin:0 auto;padding:28px 24px 64px}
+    .topbar{
+      display:flex;justify-content:space-between;align-items:center;gap:16px;
+      margin-bottom:22px;
+    }
+    .brand{
+      display:flex;align-items:center;gap:14px;
+    }
+    .brand-mark{
+      width:48px;height:48px;border-radius:16px;display:grid;place-items:center;
+      background:linear-gradient(135deg,var(--blue),var(--green));
+      box-shadow:0 18px 40px rgba(26,115,255,.35);
+      font-weight:900;font-size:20px;
+    }
+    .brand h1{margin:0;font-size:18px}
+    .brand p{margin:3px 0 0;color:#b7c6d9;font-size:12px}
+    .top-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{
+      border:0;border-radius:14px;padding:13px 18px;font-weight:800;
+      display:inline-flex;align-items:center;justify-content:center;gap:9px;
+      transition:.22s;cursor:pointer;font-size:14px;
+    }
+    .btn:hover{transform:translateY(-2px)}
+    .btn-primary{background:linear-gradient(135deg,var(--blue),#0e62e5);color:#fff;box-shadow:0 14px 35px rgba(26,115,255,.28)}
+    .btn-primary.glow{animation:glowPulse 1.8s infinite}
+    @keyframes glowPulse{
+      0%,100%{box-shadow:0 14px 35px rgba(26,115,255,.28)}
+      50%{box-shadow:0 18px 45px rgba(26,115,255,.42)}
+    }
+    .btn-light{background:#fff;color:#153a67}
+    .btn-soft{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.12)}
+    .hero{
+      position:relative;overflow:hidden;
+      background:linear-gradient(135deg,#0d1f36 0%, #123764 52%, #127853 100%);
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:30px;padding:36px;
+      box-shadow:var(--shadow);
+      margin-bottom:22px;
+    }
+    .hero:before,.hero:after{
+      content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.08)
+    }
+    .hero:before{width:300px;height:300px;right:-60px;top:-100px}
+    .hero:after{width:220px;height:220px;left:-70px;bottom:-100px}
+    .hero-grid{
+      display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:center;position:relative;z-index:1
+    }
+    .hero h2{font-size:44px;line-height:1.05;margin:0 0 12px;max-width:760px}
+    .hero p{margin:0;color:#ecf3ff;font-size:16px;line-height:1.7;max-width:680px}
+    .hero-badges{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+    .hero-badge{
+      background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.14);padding:10px 12px;
+      border-radius:999px;font-size:12px;font-weight:800;color:#f7fbff
+    }
+    .mock-live{
+      background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);
+      border-radius:24px;padding:18px;backdrop-filter:blur(8px)
+    }
+    .live-head{
+      display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px
+    }
+    .live-head b{font-size:14px}
+    .live-badge{
+      display:inline-flex;align-items:center;gap:8px;padding:8px 11px;border-radius:999px;
+      background:rgba(10,24,42,.42);font-size:11px;font-weight:900
+    }
+    .live-badge:before{
+      content:"";width:8px;height:8px;border-radius:50%;background:#3ae18f;box-shadow:0 0 0 0 rgba(58,225,143,.45);
+      animation: ping 1.6s infinite;
+    }
+    @keyframes ping{
+      0%{box-shadow:0 0 0 0 rgba(58,225,143,.5)}
+      70%{box-shadow:0 0 0 10px rgba(58,225,143,0)}
+      100%{box-shadow:0 0 0 0 rgba(58,225,143,0)}
+    }
+    .mini-chat{
+      background:#f8fbff;color:var(--text);border-radius:20px;padding:14px;box-shadow:0 10px 28px rgba(5,24,44,.22)
+    }
+    .mini-chat-top{display:flex;align-items:center;gap:10px;padding-bottom:10px;border-bottom:1px solid #e3ebf5}
+    .ava{
+      width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:#def5ea;color:#0c7b4a;font-weight:900
+    }
+    .chat-body{display:grid;gap:10px;padding-top:14px}
+    .bubble{
+      max-width:86%;padding:12px 14px;border-radius:16px;background:#fff;box-shadow:0 8px 24px rgba(22,45,78,.12);font-size:12px;line-height:1.45
+    }
+    .bubble.right{margin-left:auto;background:#def5ea}
+    .bubble.file{border-left:4px solid var(--blue)}
+    .typing{
+      width:64px;padding:10px 12px;border-radius:16px;background:#fff;box-shadow:0 8px 24px rgba(22,45,78,.12);
+      display:flex;gap:4px;align-items:center
+    }
+    .typing span{
+      width:8px;height:8px;border-radius:50%;background:#9cb1cc;animation:typing 1.2s infinite ease-in-out
+    }
+    .typing span:nth-child(2){animation-delay:.15s}
+    .typing span:nth-child(3){animation-delay:.3s}
+    @keyframes typing{
+      0%,80%,100%{transform:translateY(0);opacity:.5}
+      40%{transform:translateY(-5px);opacity:1}
+    }
+
+    .stats{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px
+    }
+    .stat{
+      background:rgba(255,255,255,.08);backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:18px
+    }
+    .stat small{display:block;color:#b7c6d9;font-size:11px;text-transform:uppercase;font-weight:900;letter-spacing:.06em}
+    .stat strong{display:block;font-size:30px;margin-top:8px}
+    .stat p{margin:6px 0 0;color:#d7e2ef;font-size:13px;line-height:1.45}
+
+    .storyboard{
+      display:grid;grid-template-columns:1.1fr .9fr;gap:22px;margin-bottom:22px
+    }
+    .panel{
+      background:#fff;color:var(--text);border-radius:28px;padding:24px;box-shadow:var(--shadow);
+    }
+    .panel h3{margin:0 0 8px;font-size:21px}
+    .panel p{margin:0;color:var(--muted);line-height:1.6}
+    .progress-top{
+      display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:18px
+    }
+    .progress-label{font-size:13px;font-weight:800;color:#355278}
+    .progress-bar{
+      margin-top:12px;height:12px;border-radius:999px;background:#e7edf5;overflow:hidden
+    }
+    .progress-bar span{
+      display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--green));
+      transition:width .55s
+    }
+    .timeline{
+      display:grid;gap:10px;margin-top:18px
+    }
+    .step{
+      display:flex;gap:12px;padding:12px;border-radius:16px;border:1px solid #ebf0f6;background:#fbfdff;
+      opacity:.35;transform:translateY(6px);transition:.35s
+    }
+    .step.active,.step.done{opacity:1;transform:translateY(0)}
+    .step.done{background:#f5fbf8;border-color:#dbeee5}
+    .step-num{
+      width:30px;height:30px;border-radius:10px;background:#edf3fb;color:var(--blue);display:grid;place-items:center;font-weight:900;flex:0 0 auto
+    }
+    .step.done .step-num{background:#e5f6ed;color:var(--green)}
+    .step b{display:block;font-size:13px}
+    .step span{display:block;color:var(--muted);font-size:12px;margin-top:4px;line-height:1.45}
+
+    .receipt-card{
+      background:#f6f9fc;border:1px solid var(--line);border-radius:20px;padding:16px;position:relative;overflow:hidden
+    }
+    .scan-line{
+      position:absolute;left:0;right:0;height:4px;background:linear-gradient(90deg, transparent, rgba(26,115,255,.8), transparent);
+      top:0;opacity:0;box-shadow:0 0 20px rgba(26,115,255,.6)
+    }
+    .scan-line.run{opacity:1;animation:scanDown 1.5s linear infinite}
+    @keyframes scanDown{
+      0%{top:0}
+      100%{top:100%}
+    }
+    .receipt-paper{
+      width:min(100%,380px);margin:0 auto;background:#fff;border-radius:14px;padding:24px;box-shadow:0 16px 40px rgba(29,46,72,.12);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    .receipt-paper h4{text-align:center;margin:0 0 16px;font-size:15px}
+    .receipt-line{display:flex;justify-content:space-between;gap:14px;padding:8px 0;border-bottom:1px dashed #d9e0e8;font-size:12px}
+    .receipt-amount{text-align:center;font-size:26px;font-weight:900;padding:18px 0;color:#11213b}
+    .chips{
+      display:flex;flex-wrap:wrap;gap:10px;margin-top:16px
+    }
+    .chip{
+      padding:10px 12px;border-radius:14px;background:#f4f8fc;border:1px solid #dfe7f0;font-size:12px;font-weight:800;color:#27486f;
+      opacity:0;transform:translateY(8px) scale(.96);transition:.35s
+    }
+    .chip.show{opacity:1;transform:translateY(0) scale(1)}
+    .chip.green{background:#edf9f3;border-color:#d9efdf;color:#136f45}
+    .chip.warn{background:#fff9e7;border-color:#f4e7b4;color:#9a7a0b}
+
+    .control-room{
+      display:grid;grid-template-columns:.95fr 1.05fr;gap:22px;margin-bottom:22px
+    }
+    .form-grid{
+      display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px
+    }
+    .field{display:grid;gap:7px}
+    .field.full{grid-column:1/-1}
+    .field label{font-size:12px;font-weight:900;color:#40536f}
+    .field input,.field select{
+      border:1px solid #d1dbe7;border-radius:12px;padding:12px 13px;font:inherit;color:var(--text);outline:none;background:#fff;
+      transition:.2s;
+    }
+    .field input:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,115,255,.12)}
+    .field.flash input,.field.flash select{
+      animation:fieldPop .5s ease;
+    }
+    @keyframes fieldPop{
+      0%{background:#fff}
+      45%{background:#eef6ff;border-color:#9dc5ff}
+      100%{background:#fff}
+    }
+
+    .confidence{
+      margin-top:16px;padding:14px;border-radius:16px;background:linear-gradient(135deg,#ecf7ff,#eefbf5);
+      border:1px solid #d5e7f2;display:flex;justify-content:space-between;align-items:center;gap:12px
+    }
+    .confidence strong{color:#124f7e;font-size:14px}
+    .confidence span{font-size:26px;font-weight:900;color:#126d44}
+    .checks{
+      display:grid;gap:10px;margin-top:16px
+    }
+    .check{
+      padding:12px;border-radius:14px;background:#fbfdff;border:1px solid #e7eef5;display:flex;align-items:center;gap:10px;
+      opacity:.4;transition:.35s
+    }
+    .check.show{opacity:1;background:#f5fbf8;border-color:#dceee4}
+    .check .dot{
+      width:24px;height:24px;border-radius:8px;background:#e4f5ec;color:var(--green);display:grid;place-items:center;font-weight:900;flex:0 0 auto
+    }
+
+    .sheet-card{
+      position:relative;
+      background:#fbfdff;border:1px solid var(--line);border-radius:20px;padding:18px;overflow:hidden
+    }
+    .sheet-top{
+      display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px
+    }
+    .sheet-badge{
+      display:inline-flex;align-items:center;gap:8px;background:#edf7ff;color:#16518d;padding:8px 11px;border-radius:999px;font-size:11px;font-weight:900
+    }
+    .table-wrap{
+      overflow:auto;border:1px solid #e1e8f0;border-radius:18px;background:#fff
+    }
+    table{width:100%;border-collapse:collapse;min-width:980px}
+    th,td{padding:12px 14px;border-bottom:1px solid #e7edf4;text-align:left;font-size:12px}
+    th{background:#f6f9fc;color:#57708d;text-transform:uppercase;font-size:10px;letter-spacing:.05em}
+    tr:last-child td{border-bottom:0}
+    .badge{
+      display:inline-flex;padding:6px 9px;border-radius:999px;font-size:11px;font-weight:900
+    }
+    .badge.ok{background:#eaf8f1;color:#156d45}
+    .badge.wait{background:#fff8df;color:#8d7006}
+    .new-row{
+      background:linear-gradient(90deg,#ecf5ff,#eefcf5);
+      animation:slideRow .8s ease;
+    }
+    @keyframes slideRow{
+      0%{transform:translateX(40px);opacity:0}
+      100%{transform:translateX(0);opacity:1}
+    }
+
+    .kpi-row{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px
+    }
+    .kpi{
+      background:#f7fafc;border:1px solid #e4ebf3;border-radius:16px;padding:16px
+    }
+    .kpi small{display:block;color:#6e8098;font-size:11px;font-weight:900;text-transform:uppercase}
+    .kpi strong{display:block;margin-top:8px;font-size:28px;color:#11213b}
+    .kpi p{margin:6px 0 0;font-size:12px;color:var(--muted)}
+
+    .cta{
+      margin-top:22px;background:linear-gradient(135deg,#f8fbff,#f4fbf7);color:var(--text);
+      border-radius:26px;padding:26px;box-shadow:var(--shadow);display:grid;grid-template-columns:1.2fr .8fr;gap:18px;align-items:center
+    }
+    .cta h3{font-size:28px;margin:0 0 8px}
+    .cta p{margin:0;color:var(--muted);line-height:1.65}
+    .cta ul{margin:14px 0 0;padding:0;list-style:none;display:grid;gap:10px}
+    .cta li{
+      background:#fff;border:1px solid #e5ebf3;border-radius:14px;padding:12px 14px;font-size:13px;font-weight:700;color:#27486f
+    }
+    .cta-side{
+      background:#fff;border:1px solid #e5ebf3;border-radius:22px;padding:22px
+    }
+    .cta-side h4{margin:0 0 8px;font-size:18px;color:#153a67}
+    .cta-side p{font-size:13px;color:var(--muted)}
+    .final-pill{
+      margin-top:14px;display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:10px 12px;
+      background:#eaf7f1;color:#156d45;font-size:12px;font-weight:900
+    }
+
+    .footer-note{
+      margin-top:18px;text-align:center;color:#b7c6d9;font-size:12px
+    }
+
+    @media(max-width:1200px){
+      .hero-grid,.storyboard,.control-room,.cta{grid-template-columns:1fr}
+      .stats{grid-template-columns:repeat(2,1fr)}
+    }
+    @media(max-width:760px){
+      .page{padding:18px 14px 44px}
+      .topbar{flex-direction:column;align-items:flex-start}
+      .hero{padding:24px}
+      .hero h2{font-size:32px}
+      .stats,.kpi-row,.form-grid{grid-template-columns:1fr}
+      .panel,.cta{padding:20px}
+      .top-actions{width:100%}
+      .top-actions .btn{flex:1}
+    }
+  </style>
 </head>
 <body>
-<div class="layout">
-<aside class="sidebar">
-  <div class="brand"><div class="logo">✓</div><div><b>Controle de Pagamentos</b><small>Protótipo da primeira versão</small></div></div>
-  <nav class="nav">
-    <button class="active" data-view="inicio">Visão geral</button>
-    <button data-view="enviar">Enviar comprovante</button>
-    <button data-view="revisar">Conferir dados</button>
-    <button data-view="registros">Compras realizadas</button>
-  </nav>
-  <div class="side-note"><b>Escopo desta versão</b><br>O sistema registra apenas na aba <b>COMPRAS REALIZADAS</b>. As outras abas da planilha não são modificadas.</div>
-</aside>
-<main class="main">
-<header class="topbar"><div><h1 id="title">Visão geral</h1><p id="subtitle">Veja como o comprovante será transformado em um lançamento organizado.</p></div><span class="online">Demonstração disponível</span></header>
-
-<section class="screen active" id="inicio">
-  <div class="hero"><h2>Comprovantes recebidos pelo WhatsApp, organizados na planilha de pagamentos.</h2><p>O sistema identifica os dados do pagamento, apresenta uma tela para conferência e, somente após a confirmação da equipe, cria uma nova linha na aba “COMPRAS REALIZADAS”.</p><div class="actions"><button class="btn light" onclick="startAutomationDemo()">▶ Ver automação funcionando</button><button class="btn soft" onclick="go('enviar')">Testar manualmente</button><button class="btn soft" onclick="document.getElementById('como').scrollIntoView()">Ver como funciona</button></div></div>
-  <div class="grid grid3" style="margin-top:18px">
-    <div class="card metric"><div><h3>Registro seguro</h3><strong>1 aba</strong><p>Somente “COMPRAS REALIZADAS” recebe novos dados.</p></div><div class="icon">▦</div></div>
-    <div class="card metric"><div><h3>Revisão antes de salvar</h3><strong>100%</strong><p>Nenhum lançamento entra sem confirmação humana.</p></div><div class="icon">✓</div></div>
-    <div class="card metric"><div><h3>Campos organizados</h3><strong>14</strong><p>Estrutura alinhada à planilha atual do cliente.</p></div><div class="icon">≡</div></div>
+  <div class="blobs">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
   </div>
-  <div class="live-panel">
-    <div class="live-head">
-      <div><h3>Central da automação</h3><p>Uma simulação visual do que acontece enquanto a equipe continua trabalhando.</p></div>
-      <span class="live-badge">Acompanhamento em tempo real</span>
-    </div>
-    <div class="automation-grid">
-      <div class="phone">
-        <div class="phone-top"><div class="avatar">JS</div><div><b>João Silva</b><small>WhatsApp · agora</small></div></div>
-        <div class="chat">
-          <div class="bubble">Olá! Segue o comprovante do pagamento do orçamento analítico.</div>
-          <div class="bubble sent filemsg">📄 comprovante_pix.pdf<br><small>R$ 2.250,00 · recebido</small></div>
-          <div class="bubble" id="autoReply" style="display:none">✅ Comprovante recebido. As informações foram organizadas e encaminhadas para conferência.</div>
+
+  <div class="page">
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-mark">✓</div>
+        <div>
+          <h1>Controle de Pagamentos</h1>
+          <p>Demonstração comercial — versão premium</p>
         </div>
       </div>
-      <div class="event-log">
-        <h4>Atividades automáticas</h4>
-        <div class="events">
-          <div class="event" id="event1"><div class="event-dot">1</div><div><b>Mensagem recebida</b><span>O comprovante chegou pelo WhatsApp.</span></div></div>
-          <div class="event" id="event2"><div class="event-dot">2</div><div><b>Informações identificadas</b><span>Valor, data, forma e fornecedor.</span></div></div>
-          <div class="event" id="event3"><div class="event-dot">3</div><div><b>Repetição verificada</b><span>Nenhum comprovante igual foi encontrado.</span></div></div>
-          <div class="event" id="event4"><div class="event-dot">4</div><div><b>Conferência preparada</b><span>Os campos estão prontos para a equipe confirmar.</span></div></div>
-          <div class="event" id="event5"><div class="event-dot">5</div><div><b>Resposta enviada</b><span>O cliente recebeu uma confirmação automática.</span></div></div>
-        </div>
+      <div class="top-actions">
+        <button class="btn btn-primary glow" onclick="startShow()">▶ Iniciar demonstração automática</button>
+        <button class="btn btn-light" onclick="resetShow()">↻ Reiniciar tudo</button>
+        <button class="btn btn-soft" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">Ver fechamento</button>
       </div>
     </div>
-    <div class="auto-actions"><button class="btn light" onclick="runInlineAutomation()">Simular novamente</button><button class="btn green" onclick="startAutomationDemo()">Abrir demonstração completa</button></div>
+
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <h2>Mostre ao cliente a sensação real de uma operação funcionando sozinha.</h2>
+          <p>Esta demonstração simula, de forma visual e envolvente, o caminho do comprovante: chegada pelo WhatsApp, leitura das informações, conferência automática, preparação do lançamento e registro na aba “COMPRAS REALIZADAS”.</p>
+          <div class="hero-badges">
+            <span class="hero-badge">Sem alterar as abas das etapas</span>
+            <span class="hero-badge">Conferência humana antes de salvar</span>
+            <span class="hero-badge">Visual profissional para apresentação</span>
+          </div>
+        </div>
+
+        <div class="mock-live">
+          <div class="live-head">
+            <div>
+              <b>Sensação de automação ao vivo</b>
+              <div style="font-size:12px;color:#c8d6e6;margin-top:4px">Tudo acontece com animação e narrativa visual.</div>
+            </div>
+            <span class="live-badge">Ao vivo</span>
+          </div>
+          <div class="mini-chat">
+            <div class="mini-chat-top">
+              <div class="ava">JS</div>
+              <div>
+                <strong style="display:block;font-size:13px">João Silva</strong>
+                <small style="color:#70819a">Fornecedor / responsável</small>
+              </div>
+            </div>
+            <div class="chat-body">
+              <div class="bubble">Olá! Segue o comprovante referente ao pagamento do orçamento analítico.</div>
+              <div class="bubble right file">📄 comprovante_pix.pdf<br><small>R$ 2.250,00 • enviado agora</small></div>
+              <div class="typing" id="heroTyping"><span></span><span></span><span></span></div>
+              <div class="bubble" id="heroReply" style="display:none">✅ Comprovante recebido. As informações foram organizadas e estão prontas para conferência.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats">
+      <div class="stat">
+        <small>Comprovantes organizados</small>
+        <strong id="statDocs">0</strong>
+        <p>Exemplo de produção mensal com menos trabalho manual.</p>
+      </div>
+      <div class="stat">
+        <small>Lançamentos preparados</small>
+        <strong id="statRows">0</strong>
+        <p>Registros prontos para conferência antes de salvar.</p>
+      </div>
+      <div class="stat">
+        <small>Redução de retrabalho</small>
+        <strong id="statGain">0%</strong>
+        <p>Menos digitação e menos risco de esquecer comprovantes.</p>
+      </div>
+      <div class="stat">
+        <small>Tempo economizado</small>
+        <strong id="statTime">0h</strong>
+        <p>Estimativa visual para mostrar o ganho de rotina.</p>
+      </div>
+    </section>
+
+    <section class="storyboard">
+      <div class="panel">
+        <h3>O que está acontecendo agora</h3>
+        <p>Apresente este bloco como a “central da automação”. O cliente verá cada etapa sendo executada em sequência.</p>
+
+        <div class="progress-top">
+          <div class="progress-label" id="progressLabel">Aguardando início da demonstração</div>
+          <div style="font-size:12px;font-weight:900;color:#67809d" id="progressPercent">0%</div>
+        </div>
+        <div class="progress-bar"><span id="mainProgress"></span></div>
+
+        <div class="timeline">
+          <div class="step" id="step1"><div class="step-num">1</div><div><b>Mensagem recebida</b><span>O comprovante chegou pelo WhatsApp.</span></div></div>
+          <div class="step" id="step2"><div class="step-num">2</div><div><b>Documento lido</b><span>O valor, a data e o fornecedor são identificados.</span></div></div>
+          <div class="step" id="step3"><div class="step-num">3</div><div><b>Campos organizados</b><span>As informações são distribuídas na estrutura da planilha.</span></div></div>
+          <div class="step" id="step4"><div class="step-num">4</div><div><b>Conferência de repetição</b><span>O sistema verifica se já existe lançamento semelhante.</span></div></div>
+          <div class="step" id="step5"><div class="step-num">5</div><div><b>Tela de revisão preenchida</b><span>A equipe recebe tudo pronto para confirmar.</span></div></div>
+          <div class="step" id="step6"><div class="step-num">6</div><div><b>Lançamento preparado</b><span>O registro fica pronto para entrar em “COMPRAS REALIZADAS”.</span></div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Leitura do comprovante</h3>
+        <p>Os principais dados aparecem de forma visual, um por um, como se o sistema estivesse realmente lendo o documento.</p>
+
+        <div class="receipt-card">
+          <div class="scan-line" id="scanLine"></div>
+          <div class="receipt-paper">
+            <h4>COMPROVANTE DE PAGAMENTO</h4>
+            <div class="receipt-amount">R$ 2.250,00</div>
+            <div class="receipt-line"><span>Data</span><strong>12/11/2025</strong></div>
+            <div class="receipt-line"><span>Horário</span><strong>14:42</strong></div>
+            <div class="receipt-line"><span>Pagador</span><strong>João Silva</strong></div>
+            <div class="receipt-line"><span>Recebedor</span><strong>BIMais Soluções</strong></div>
+            <div class="receipt-line"><span>Forma</span><strong>Pix</strong></div>
+            <div class="receipt-line"><span>Identificação</span><strong>E123456789</strong></div>
+          </div>
+        </div>
+
+        <div class="chips">
+          <div class="chip" id="chip1">Valor: R$ 2.250,00</div>
+          <div class="chip" id="chip2">Data: 12/11/2025</div>
+          <div class="chip" id="chip3">Forma: Pix</div>
+          <div class="chip green" id="chip4">Fornecedor: BIMais Soluções</div>
+          <div class="chip" id="chip5">Descrição sugerida: Orçamento analítico — 50%</div>
+          <div class="chip warn" id="chip6">Aguardando etapa e código para conferência</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="control-room">
+      <div class="panel">
+        <h3>Tela de conferência</h3>
+        <p>Os campos são preenchidos automaticamente. A equipe apenas revisa e confirma antes do lançamento.</p>
+
+        <div class="confidence">
+          <strong>Leitura com alta confiança</strong>
+          <span id="confidenceValue">0%</span>
+        </div>
+
+        <div class="form-grid">
+          <div class="field" id="field-etapa">
+            <label>Etapa</label>
+            <select id="inputEtapa">
+              <option value="">Selecionar</option>
+              <option>ETAPA 1</option>
+              <option selected>ETAPA 2</option>
+              <option>ETAPA 3</option>
+            </select>
+          </div>
+          <div class="field" id="field-status">
+            <label>Status</label>
+            <select id="inputStatus">
+              <option>Solicitado</option>
+              <option selected>Pago</option>
+            </select>
+          </div>
+          <div class="field" id="field-forma">
+            <label>Forma de pagamento</label>
+            <input id="inputForma" value="" />
+          </div>
+          <div class="field" id="field-solic">
+            <label>Data da solicitação</label>
+            <input id="inputSolic" value="" />
+          </div>
+          <div class="field" id="field-pag">
+            <label>Data do pagamento</label>
+            <input id="inputPag" value="" />
+          </div>
+          <div class="field" id="field-codigo">
+            <label>Código</label>
+            <input id="inputCodigo" value="" placeholder="Conferir manualmente" />
+          </div>
+          <div class="field" id="field-tipologia">
+            <label>Tipologia</label>
+            <input id="inputTipologia" value="" />
+          </div>
+          <div class="field" id="field-desc">
+            <label>Descrição</label>
+            <input id="inputDesc" value="" />
+          </div>
+          <div class="field" id="field-fornecedor">
+            <label>Fornecedor</label>
+            <input id="inputFornecedor" value="" />
+          </div>
+          <div class="field" id="field-valor">
+            <label>Valor</label>
+            <input id="inputValor" value="" />
+          </div>
+          <div class="field full" id="field-obs">
+            <label>Observações</label>
+            <input id="inputObs" value="" placeholder="Comprovante recebido pelo WhatsApp." />
+          </div>
+        </div>
+
+        <div class="checks">
+          <div class="check" id="check1"><div class="dot">✓</div><div><strong style="font-size:13px">Comprovante recebido</strong><div style="font-size:12px;color:#6e7e95">Arquivo pronto para análise.</div></div></div>
+          <div class="check" id="check2"><div class="dot">✓</div><div><strong style="font-size:13px">Fornecedor identificado</strong><div style="font-size:12px;color:#6e7e95">BIMais Soluções reconhecido.</div></div></div>
+          <div class="check" id="check3"><div class="dot">✓</div><div><strong style="font-size:13px">Possível repetição verificada</strong><div style="font-size:12px;color:#6e7e95">Nenhum lançamento igual encontrado.</div></div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Resultado final na planilha</h3>
+        <p>Ao final da conferência, o lançamento aparece na aba “COMPRAS REALIZADAS” com destaque visual.</p>
+
+        <div class="sheet-card">
+          <div class="sheet-top">
+            <div class="sheet-badge">Aba segura: COMPRAS REALIZADAS</div>
+            <button class="btn btn-primary" id="insertBtn" onclick="insertRowManually()">Inserir lançamento agora</button>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Etapa</th>
+                  <th>Status</th>
+                  <th>Forma</th>
+                  <th>Solicitação</th>
+                  <th>Pagamento</th>
+                  <th>Código</th>
+                  <th>Tipologia</th>
+                  <th>Descrição</th>
+                  <th>Fornecedor</th>
+                  <th>Valor</th>
+                  <th>Observações</th>
+                </tr>
+              </thead>
+              <tbody id="sheetRows">
+                <tr>
+                  <td>ETAPA 1</td>
+                  <td><span class="badge ok">Pago</span></td>
+                  <td>Pix</td>
+                  <td>10/11/2025</td>
+                  <td>11/11/2025</td>
+                  <td>AC-102</td>
+                  <td>Material</td>
+                  <td>Cimento CP II</td>
+                  <td>Fornecedor Exemplo</td>
+                  <td>R$ 1.380,00</td>
+                  <td>Comprovante validado</td>
+                </tr>
+                <tr>
+                  <td>ETAPA 2</td>
+                  <td><span class="badge wait">Solicitado</span></td>
+                  <td>Transferência</td>
+                  <td>12/11/2025</td>
+                  <td>—</td>
+                  <td>SV-220</td>
+                  <td>Serviço</td>
+                  <td>Mão de obra civil</td>
+                  <td>Prestador Exemplo</td>
+                  <td>R$ 5.000,00</td>
+                  <td>Aguardando pagamento</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="kpi-row">
+            <div class="kpi">
+              <small>Recebido por WhatsApp</small>
+              <strong id="kpiMsg">0</strong>
+              <p>Comprovante detectado na conversa.</p>
+            </div>
+            <div class="kpi">
+              <small>Campos preenchidos</small>
+              <strong id="kpiFields">0/10</strong>
+              <p>Prontos para revisão da equipe.</p>
+            </div>
+            <div class="kpi">
+              <small>Situação do lançamento</small>
+              <strong id="kpiState">Aguardando</strong>
+              <p>Atualizado ao longo da demonstração.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta" id="cta">
+      <div>
+        <h3>O cliente precisa enxergar isso como ganho de rotina — não como tecnologia.</h3>
+        <p>Ao apresentar esta tela, a conversa muda de “quanto custa?” para “quando começamos?”. O foco fica claro: menos retrabalho, menos esquecimento, mais controle e uma equipe mais rápida no dia a dia.</p>
+        <ul>
+          <li>✅ Comprovante recebido e organizado automaticamente</li>
+          <li>✅ Conferência antes do lançamento para reduzir erro</li>
+          <li>✅ Registro concentrado em uma aba segura da planilha</li>
+          <li>✅ Mais clareza para acompanhar compras e pagamentos</li>
+        </ul>
+      </div>
+      <div class="cta-side">
+        <h4>Mensagem para reforçar na apresentação</h4>
+        <p>“Hoje sua equipe perde tempo abrindo mensagens, lendo comprovantes e digitando tudo manualmente. Com esse fluxo, o sistema já traz o lançamento praticamente pronto — a equipe só confere e confirma.”</p>
+        <div class="final-pill">Pronto para usar como apresentação comercial</div>
+      </div>
+    </section>
+
+    <div class="footer-note">Demonstração visual. Nenhum dado real é enviado ou salvo neste arquivo.</div>
   </div>
-  <div class="card" id="como" style="margin-top:18px"><h3 style="margin-top:0">Como funcionará</h3><div class="flow">
-    <div class="step"><div class="num">1</div><b>Envio pelo WhatsApp</b><span>A equipe recebe a foto ou o PDF do comprovante.</span></div>
-    <div class="step"><div class="num">2</div><b>Leitura das informações</b><span>Valor, data, forma de pagamento e fornecedor são identificados.</span></div>
-    <div class="step"><div class="num">3</div><b>Complemento dos dados</b><span>A equipe informa etapa, código, tipologia e descrição quando necessário.</span></div>
-    <div class="step"><div class="num">4</div><b>Conferência humana</b><span>Todos os campos são revisados antes do registro.</span></div>
-    <div class="step"><div class="num">5</div><b>Novo lançamento</b><span>Uma linha é criada apenas em “COMPRAS REALIZADAS”.</span></div>
-  </div><div class="notice"><b>Proteção da planilha:</b> as abas de etapas, pedidos e orçamentos permanecem intactas nesta primeira versão.</div></div>
-</section>
 
-<section class="screen" id="enviar">
-<div class="upload-layout">
-  <div class="card"><h3 style="margin-top:0">Simular recebimento do comprovante</h3><p>Selecione uma imagem ou PDF. O protótipo exibirá um exemplo de leitura para o cliente experimentar.</p><div class="drop" id="drop"><div><div class="big">📄</div><h3>Arraste o comprovante aqui</h3><p>Também é possível selecionar um arquivo no computador.</p><input type="file" id="fileInput" accept="image/*,.pdf" hidden><button class="btn primary" onclick="fileInput.click()">Selecionar arquivo</button><div class="file" id="fileName"></div></div></div><div class="process" id="process"><b id="processText">Preparando...</b><div class="bar"><span id="progress"></span></div></div></div>
-  <div class="card"><h3 style="margin-top:0">O que será verificado</h3><div class="checklist">
-    <div class="check"><i>1</i><div><b>Comprovante válido</b><small>Confirma se a imagem parece ser um pagamento.</small></div></div>
-    <div class="check"><i>2</i><div><b>Dados visíveis</b><small>Valor, data, forma e recebedor.</small></div></div>
-    <div class="check"><i>3</i><div><b>Possível repetição</b><small>Ajuda a identificar o mesmo comprovante enviado novamente.</small></div></div>
-    <div class="check"><i>4</i><div><b>Informações da compra</b><small>Etapa, código, tipologia, descrição e fornecedor.</small></div></div>
-    <div class="check"><i>5</i><div><b>Confirmação da equipe</b><small>O registro só é criado após a conferência.</small></div></div>
-  </div></div>
-</div>
-</section>
+  <script>
+    const state = {
+      started:false,
+      rowInserted:false,
+      timers:[]
+    };
 
-<section class="screen" id="revisar">
-<div class="review">
-  <div class="card"><h3 style="margin-top:0">Comprovante recebido</h3><p>Exemplo ilustrativo do documento enviado.</p><div class="receipt-box"><div class="receipt"><h4>COMPROVANTE PIX</h4><div class="amount">R$ 2.250,00</div><div class="rline"><span>Data</span><b>12/11/2025</b></div><div class="rline"><span>Pagador</span><b>Cliente Exemplo</b></div><div class="rline"><span>Recebedor</span><b>BIMais Soluções</b></div><div class="rline"><span>Forma</span><b>Pix</b></div><div class="rline"><span>Identificação</span><b>E123456789</b></div></div></div></div>
-  <div class="card"><h3 style="margin-top:0">Conferir antes de registrar</h3><div class="locked"><b>Destino do lançamento:</b> aba “COMPRAS REALIZADAS”. Nenhuma outra aba será alterada.</div><div class="review-banner"><b>Atenção:</b> etapa, código, tipologia e descrição devem ser confirmados pela equipe.</div>
-  <div class="form">
-    <div class="field"><label>ETAPA</label><select id="etapa"><option>1</option><option>2</option><option>3</option><option>DIVERSAS</option></select></div>
-    <div class="field"><label>STATUS</label><select id="status"><option selected>PAGO</option><option>PENDENTE</option><option>EM CONFERÊNCIA</option></select></div>
-    <div class="field"><label>FORMA DE PAGAMENTO</label><select id="forma"><option selected>PIX</option><option>DEPÓSITO</option><option>BOLETO</option><option>CARTÃO</option></select></div>
-    <div class="field"><label>DATA DE SOLICITAÇÃO</label><input id="solicitacao" value="12/11/2025"></div>
-    <div class="field"><label>DATA DO PAGAMENTO</label><input id="pagamento" value="12/11/2025"></div>
-    <div class="field"><label>CÓDIGO</label><input id="codigo" placeholder="Ex.: 001"></div>
-    <div class="field"><label>TIPOLOGIA</label><select id="tipologia"><option selected>OUTROS</option><option>MATERIAL</option><option>SERVIÇO</option></select></div>
-    <div class="field"><label>FORNECEDOR</label><input id="fornecedor" value="BIMais Soluções"></div>
-    <div class="field full"><label>DESCRIÇÃO</label><input id="descricao" value="Orçamento analítico (50%)"></div>
-    <div class="field"><label>VALOR (R$)</label><input id="valor" value="R$ 2.250,00"></div>
-    <div class="field"><label>MAPA DE PREÇOS E COTAÇÕES</label><input id="mapa" placeholder="Link opcional"></div>
-    <div class="field"><label>NOTAS FISCAIS</label><input id="nota" placeholder="Link opcional"></div>
-    <div class="field full"><label>OBSERVAÇÕES</label><textarea id="obs" rows="3" placeholder="Observações adicionais"></textarea></div>
-  </div><div class="actions" style="justify-content:flex-end"><button class="btn warn" onclick="toast('Lançamento separado para revisão.')">Salvar para revisar depois</button><button class="btn green" onclick="confirmar()">Confirmar e registrar</button></div></div>
-</div>
-</section>
+    function clearAllTimers(){
+      state.timers.forEach(t => clearTimeout(t));
+      state.timers = [];
+    }
 
-<section class="screen" id="registros">
-<div class="card"><div style="display:flex;justify-content:space-between;gap:15px;align-items:center;flex-wrap:wrap"><div><h3 style="margin:0">Aba “COMPRAS REALIZADAS”</h3><p>Prévia dos lançamentos organizados no mesmo formato da planilha atual.</p></div><button class="btn primary" onclick="go('enviar')">Novo comprovante</button></div>
-<div class="tablewrap"><table><thead><tr><th>Etapa</th><th>Status</th><th>Forma de pagamento</th><th>Data solicitação</th><th>Data pagamento</th><th>Código</th><th>Tipologia</th><th>Descrição</th><th>Fornecedor</th><th>Valor (R$)</th><th>Mapa de preços</th><th>Notas fiscais</th><th>Observações</th></tr></thead><tbody id="rows"><tr><td>2</td><td><span class="badge paid">PAGO</span></td><td>PIX</td><td>03/12/2025</td><td>04/12/2025</td><td>001</td><td>MATERIAL</td><td>Telhas metálicas (tapume)</td><td>IPAB</td><td class="money">R$ 9.975,00</td><td>—</td><td>—</td><td>—</td></tr><tr><td>1</td><td><span class="badge paid">PAGO</span></td><td>PIX</td><td>24/11/2025</td><td>24/11/2025</td><td>—</td><td>OUTROS</td><td>ART EXECUÇÃO</td><td>BIMais</td><td class="money">R$ 271,47</td><td>—</td><td>—</td><td>—</td></tr></tbody></table></div></div>
-</section>
-</main></div>
-<div class="automation-overlay" id="automationOverlay">
-  <div class="automation-modal">
-    <div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start">
-      <div><h2>Automação em andamento</h2><p>Veja cada ação acontecer automaticamente, do recebimento até a preparação do lançamento.</p></div>
-      <button class="btn soft" onclick="closeAutomationDemo()">Fechar</button>
-    </div>
-    <div class="demo-status">
-      <div class="demo-stat"><small>Origem</small><strong>WhatsApp</strong></div>
-      <div class="demo-stat"><small>Documento</small><strong>Comprovante Pix</strong></div>
-      <div class="demo-stat"><small>Valor identificado</small><strong id="demoValue">—</strong></div>
-      <div class="demo-stat"><small>Situação</small><strong id="demoSituation">Recebendo</strong></div>
-    </div>
-    <div class="activity">
-      <div class="activity-row" id="activity1"><div class="tick">1</div><div><b>Nova mensagem recebida</b><span>João Silva enviou “comprovante_pix.pdf”.</span></div></div>
-      <div class="activity-row" id="activity2"><div class="tick">2</div><div><b>Documento lido automaticamente</b><span>Pagamento no valor de R$ 2.250,00 identificado.</span></div></div>
-      <div class="activity-row" id="activity3"><div class="tick">3</div><div><b>Informações organizadas</b><span>Forma: Pix · Data: 12/11/2025 · Fornecedor: BIMais Soluções.</span></div></div>
-      <div class="activity-row" id="activity4"><div class="tick">4</div><div><b>Possível repetição verificada</b><span>Nenhum lançamento semelhante encontrado.</span></div></div>
-      <div class="activity-row" id="activity5"><div class="tick">5</div><div><b>Conferência criada para a equipe</b><span>O sistema aguarda apenas etapa, código e confirmação.</span></div></div>
-      <div class="activity-row" id="activity6"><div class="tick">6</div><div><b>Cliente avisado automaticamente</b><span>Mensagem de recebimento enviada pelo WhatsApp.</span></div></div>
-    </div>
-    <div class="demo-progress"><span id="demoProgress"></span></div>
-    <div class="actions" style="justify-content:flex-end;margin-bottom:0">
-      <button class="btn soft" id="restartDemo" onclick="runFullAutomation()">Repetir</button>
-      <button class="btn green" id="reviewDemo" onclick="closeAutomationDemo();go('revisar')" style="display:none">Abrir conferência</button>
-    </div>
-  </div>
-</div>
-<div class="toast" id="toast"></div>
-<script>
-const meta={inicio:['Visão geral','Veja como o comprovante será transformado em um lançamento organizado.'],enviar:['Enviar comprovante','Simule o recebimento de uma foto ou PDF pelo WhatsApp.'],revisar:['Conferir dados','Revise todos os campos antes de criar o lançamento.'],registros:['Compras realizadas','Visualize os registros adicionados à aba principal.']};
-function go(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelector(`[data-view="${id}"]`).classList.add('active');title.textContent=meta[id][0];subtitle.textContent=meta[id][1];scrollTo({top:0,behavior:'smooth'})}
-document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>go(b.dataset.view));
-const drop=document.getElementById('drop'),fileInput=document.getElementById('fileInput');['dragenter','dragover'].forEach(e=>drop.addEventListener(e,x=>{x.preventDefault();drop.classList.add('drag')}));['dragleave','drop'].forEach(e=>drop.addEventListener(e,x=>{x.preventDefault();drop.classList.remove('drag')}));drop.addEventListener('drop',e=>processFile(e.dataTransfer.files[0]));fileInput.onchange=()=>processFile(fileInput.files[0]);
-function processFile(file){if(!file)return;fileName.textContent='Arquivo selecionado: '+file.name;process.classList.add('show');progress.style.width='15%';processText.textContent='Recebendo o comprovante...';setTimeout(()=>{progress.style.width='45%';processText.textContent='Lendo as informações...'},650);setTimeout(()=>{progress.style.width='75%';processText.textContent='Organizando os campos da planilha...'},1350);setTimeout(()=>{progress.style.width='100%';processText.textContent='Pronto para conferência.'},2050);setTimeout(()=>go('revisar'),2600)}
-function confirmar(){const vals=[etapa.value,status.value,forma.value,solicitacao.value,pagamento.value,codigo.value||'—',tipologia.value,descricao.value,fornecedor.value,valor.value,mapa.value||'—',nota.value||'—',obs.value||'—'];const tr=document.createElement('tr');vals.forEach((v,i)=>{const td=document.createElement('td');if(i===1)td.innerHTML='<span class="badge paid">'+v+'</span>';else td.textContent=v;if(i===9)td.className='money';tr.appendChild(td)});rows.prepend(tr);toast('Pagamento registrado em “COMPRAS REALIZADAS”.');setTimeout(()=>go('registros'),600)}
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.tt);window.tt=setTimeout(()=>t.classList.remove('show'),2800)}
+    function setLater(fn, ms){
+      const id = setTimeout(fn, ms);
+      state.timers.push(id);
+    }
 
-let inlineTimers=[], fullTimers=[];
-function clearTimers(list){list.forEach(clearTimeout);list.length=0}
-function runInlineAutomation(){
-  clearTimers(inlineTimers);
-  for(let i=1;i<=5;i++){const el=document.getElementById('event'+i);el.classList.remove('active','done')}
-  autoReply.style.display='none';
-  [1,2,3,4,5].forEach((n,index)=>{
-    inlineTimers.push(setTimeout(()=>{
-      if(n>1)document.getElementById('event'+(n-1)).classList.add('done');
-      document.getElementById('event'+n).classList.add('active');
-      if(n===5){document.getElementById('event5').classList.add('done');autoReply.style.display='block'}
-    },index*780));
-  });
-}
-function startAutomationDemo(){
-  automationOverlay.classList.add('show');
-  runFullAutomation();
-}
-function closeAutomationDemo(){
-  automationOverlay.classList.remove('show');
-  clearTimers(fullTimers);
-}
-function runFullAutomation(){
-  clearTimers(fullTimers);
-  for(let i=1;i<=6;i++)document.getElementById('activity'+i).classList.remove('on','done');
-  demoProgress.style.width='0%';
-  demoValue.textContent='—';
-  demoSituation.textContent='Recebendo';
-  reviewDemo.style.display='none';
-  [1,2,3,4,5,6].forEach((n,index)=>{
-    fullTimers.push(setTimeout(()=>{
-      if(n>1)document.getElementById('activity'+(n-1)).classList.add('done');
-      document.getElementById('activity'+n).classList.add('on');
-      demoProgress.style.width=((n/6)*100)+'%';
-      if(n===2)demoValue.textContent='R$ 2.250,00';
-      if(n===3)demoSituation.textContent='Organizando';
-      if(n===4)demoSituation.textContent='Verificando';
-      if(n===5)demoSituation.textContent='Aguardando conferência';
-      if(n===6){
-        document.getElementById('activity6').classList.add('done');
-        demoSituation.textContent='Pronto para conferir';
-        reviewDemo.style.display='inline-flex';
-        toast('Automação concluída. O lançamento está pronto para conferência.');
+    function animateCount(el, end, suffix="", duration=1200){
+      const start = 0;
+      const stepTime = 16;
+      const totalSteps = Math.max(1, Math.round(duration / stepTime));
+      let step = 0;
+      const inc = end / totalSteps;
+      const timer = setInterval(() => {
+        step++;
+        const val = Math.min(end, Math.round(step * inc));
+        el.textContent = val + suffix;
+        if(step >= totalSteps) clearInterval(timer);
+      }, stepTime);
+    }
+
+    function setProgress(pct, label){
+      document.getElementById("mainProgress").style.width = pct + "%";
+      document.getElementById("progressPercent").textContent = pct + "%";
+      document.getElementById("progressLabel").textContent = label;
+    }
+
+    function activateStep(n){
+      for(let i=1;i<=6;i++){
+        const el = document.getElementById("step"+i);
+        el.classList.remove("active");
+        if(i < n) el.classList.add("done");
+        if(i >= n) el.classList.remove("done");
       }
-    },index*900));
-  });
-}
-window.addEventListener('load',()=>setTimeout(runInlineAutomation,700));
-</script>
-</body></html>
+      document.getElementById("step"+n).classList.add("active");
+    }
+
+    function showChip(n){ document.getElementById("chip"+n).classList.add("show"); }
+    function flashField(id){
+      const el = document.getElementById(id);
+      el.classList.remove("flash");
+      void el.offsetWidth;
+      el.classList.add("flash");
+    }
+    function fillField(inputId, value, fieldId){
+      const input = document.getElementById(inputId);
+      input.value = value;
+      flashField(fieldId);
+    }
+    function showCheck(n){ document.getElementById("check"+n).classList.add("show"); }
+
+    function resetShow(){
+      clearAllTimers();
+      state.started = false;
+      state.rowInserted = false;
+
+      document.getElementById("heroTyping").style.display = "flex";
+      document.getElementById("heroReply").style.display = "none";
+
+      animateCount(document.getElementById("statDocs"),0);
+      document.getElementById("statDocs").textContent = "0";
+      document.getElementById("statRows").textContent = "0";
+      document.getElementById("statGain").textContent = "0%";
+      document.getElementById("statTime").textContent = "0h";
+
+      setProgress(0, "Aguardando início da demonstração");
+      for(let i=1;i<=6;i++){
+        const step = document.getElementById("step"+i);
+        step.classList.remove("active","done");
+      }
+      document.getElementById("scanLine").classList.remove("run");
+
+      for(let i=1;i<=6;i++){
+        document.getElementById("chip"+i).classList.remove("show");
+      }
+
+      document.getElementById("confidenceValue").textContent = "0%";
+      document.getElementById("inputForma").value = "";
+      document.getElementById("inputSolic").value = "";
+      document.getElementById("inputPag").value = "";
+      document.getElementById("inputCodigo").value = "";
+      document.getElementById("inputTipologia").value = "";
+      document.getElementById("inputDesc").value = "";
+      document.getElementById("inputFornecedor").value = "";
+      document.getElementById("inputValor").value = "";
+      document.getElementById("inputObs").value = "Comprovante recebido pelo WhatsApp.";
+      for(let i=1;i<=3;i++) document.getElementById("check"+i).classList.remove("show");
+
+      document.getElementById("kpiMsg").textContent = "0";
+      document.getElementById("kpiFields").textContent = "0/10";
+      document.getElementById("kpiState").textContent = "Aguardando";
+
+      const rows = document.querySelectorAll("#sheetRows tr.new-row");
+      rows.forEach(r => r.remove());
+      document.getElementById("insertBtn").disabled = false;
+      document.getElementById("insertBtn").textContent = "Inserir lançamento agora";
+    }
+
+    function startShow(){
+      resetShow();
+      state.started = true;
+
+      // KPIs
+      animateCount(document.getElementById("statDocs"), 128, "", 1000);
+      setLater(() => animateCount(document.getElementById("statRows"), 117, "", 1000), 280);
+      setLater(() => animateCount(document.getElementById("statGain"), 78, "%", 1000), 420);
+      setLater(() => animateCount(document.getElementById("statTime"), 31, "h", 1000), 620);
+
+      // Chat response
+      setLater(() => {
+        document.getElementById("heroTyping").style.display = "none";
+        document.getElementById("heroReply").style.display = "block";
+      }, 4600);
+
+      // Sequence
+      setLater(() => {activateStep(1); setProgress(12, "Mensagem recebida pelo WhatsApp"); document.getElementById("kpiMsg").textContent = "1";}, 400);
+      setLater(() => {activateStep(2); setProgress(30, "Lendo o comprovante"); document.getElementById("scanLine").classList.add("run"); showChip(1); showChip(2);}, 1800);
+      setLater(() => {showChip(3); showChip(4);}, 2900);
+      setLater(() => {activateStep(3); setProgress(48, "Organizando os campos da planilha"); showChip(5); fillField("inputForma","Pix","field-forma"); fillField("inputPag","12/11/2025","field-pag"); fillField("inputFornecedor","BIMais Soluções","field-fornecedor"); fillField("inputValor","R$ 2.250,00","field-valor"); document.getElementById("confidenceValue").textContent = "96%"; document.getElementById("kpiFields").textContent = "4/10";}, 3800);
+      setLater(() => {fillField("inputTipologia","Outros","field-tipologia"); fillField("inputDesc","Orçamento analítico — 50%","field-desc"); fillField("inputSolic","12/11/2025","field-solic"); document.getElementById("kpiFields").textContent = "7/10"; showCheck(1); showCheck(2);}, 5100);
+      setLater(() => {activateStep(4); setProgress(64, "Verificando se o comprovante já foi lançado"); showChip(6); showCheck(3); document.getElementById("scanLine").classList.remove("run"); document.getElementById("kpiState").textContent = "Verificando";}, 6500);
+      setLater(() => {activateStep(5); setProgress(82, "Preparando a tela de conferência"); fillField("inputCodigo","Conferir","field-codigo"); document.getElementById("kpiFields").textContent = "8/10"; document.getElementById("kpiState").textContent = "Pronto para revisar";}, 8100);
+      setLater(() => {activateStep(6); setProgress(100, "Lançamento pronto para entrar na planilha"); document.getElementById("kpiState").textContent = "Pronto para lançar"; document.getElementById("insertBtn").classList.add("glow");}, 9700);
+      setLater(() => {insertRowManually();}, 11200);
+    }
+
+    function insertRowManually(){
+      if(state.rowInserted) return;
+      state.rowInserted = true;
+      document.getElementById("insertBtn").disabled = true;
+      document.getElementById("insertBtn").textContent = "Lançamento inserido";
+
+      const tr = document.createElement("tr");
+      tr.className = "new-row";
+      tr.innerHTML = `
+        <td>ETAPA 2</td>
+        <td><span class="badge ok">Pago</span></td>
+        <td>Pix</td>
+        <td>12/11/2025</td>
+        <td>12/11/2025</td>
+        <td>Conferir</td>
+        <td>Outros</td>
+        <td>Orçamento analítico — 50%</td>
+        <td>BIMais Soluções</td>
+        <td>R$ 2.250,00</td>
+        <td>Comprovante recebido pelo WhatsApp</td>
+      `;
+      document.getElementById("sheetRows").prepend(tr);
+      document.getElementById("kpiState").textContent = "Lançado";
+    }
+
+    // Initialize
+    resetShow();
+  </script>
+</body>
+</html>
